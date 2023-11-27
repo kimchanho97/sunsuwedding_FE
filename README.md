@@ -268,7 +268,7 @@ npm start
 
 ## 기술 스택
 
-![기술 스택)](https://github.com/Step3-kakao-tech-campus/Team5_BE/assets/84652886/1710fc38-9fc3-44d1-b9f9-e2893129eda1)
+![기술스택](https://github.com/Step3-kakao-tech-campus/Team5_BE/assets/84652886/62444da9-f45d-4c7a-a046-449da0445592)
 
 <br>
 
