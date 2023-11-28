@@ -290,4 +290,6 @@ npm start
 
 ## API 모아보기
 
+[API 문서](https://unmarred-belief-362.notion.site/6fd74038970941a2ad02df0045705095?v=545b8da990c74661b2b6b560009766ff)
+
 <img width="600" alt="API 모아보기" src="https://github.com/Step3-kakao-tech-campus/Team5_BE/assets/84652886/4d1b3f33-9411-438d-b78e-756db7fa121d">
