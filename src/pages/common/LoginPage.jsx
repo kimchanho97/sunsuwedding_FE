@@ -2,18 +2,22 @@ import CircularProgress from "@mui/material/CircularProgress";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { login } from "../apis/user";
-import { ReactComponent as Logo } from "../assets/logo-01.svg";
-import BackButtonHeader from "../components/common/BackButtonHeader";
-import AlertBox from "../components/common/accounts/AlertBox";
-import InputGroup from "../components/common/accounts/InputGroup";
-import Box from "../components/common/atoms/Box";
-import Button from "../components/common/atoms/Button";
-import Container from "../components/common/atoms/Container";
-import useInput from "../hooks/useInput";
-import { fetchAvatar, fetchUserInfo, logIn } from "../store/slices/userSlice";
-import { validateEmail, validatePassword } from "../utils";
-import useDefaultErrorHandler from "../hooks/useDefaultErrorHandler";
+import { login } from "../../apis/user";
+import { ReactComponent as Logo } from "../../assets/logo-01.svg";
+import BackButtonHeader from "../../components/common/BackButtonHeader";
+import AlertBox from "../../components/common/accounts/AlertBox";
+import InputGroup from "../../components/common/accounts/InputGroup";
+import Box from "../../components/common/atoms/Box";
+import Button from "../../components/common/atoms/Button";
+import Container from "../../components/common/atoms/Container";
+import useInput from "../../hooks/useInput";
+import {
+  fetchAvatar,
+  fetchUserInfo,
+  logIn,
+} from "../../store/slices/userSlice";
+import { validateEmail, validatePassword } from "../../utils";
+import useDefaultErrorHandler from "../../hooks/useDefaultErrorHandler";
 
 // 테스트 완료
 export default function LoginPage() {

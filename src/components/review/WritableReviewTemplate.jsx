@@ -3,10 +3,10 @@ import { AiOutlineDoubleRight } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import Photo from "../common/atoms/Photo";
 
-export default function WritableReviewTemplate({ matches, avatars }) {
+export default function WritableReviewTemplate({ matches }) {
   return (
     <div className="w-full h-full p-5 flex flex-col gap-3">
-      {matches.map((match, idx) => (
+      {matches.map((match) => (
         <Link
           className="flex gap-2 hover:bg-zinc-100 w-full hover:rounded-[10px] p-2 border-b"
           to={`/profile/reviews/create/${
@@ -15,7 +15,6 @@ export default function WritableReviewTemplate({ matches, avatars }) {
           key={match.plannerId}
         >
           <Photo
-            src={avatars[idx]}
             alt="avatar"
             className="w-12 h-12 object-cover object-center rounded-2xl shrink-0"
           />

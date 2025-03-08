@@ -3,9 +3,9 @@ import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
 import { Link, useSearchParams } from "react-router-dom";
-import { paymentApprovalAndUserUpgrade } from "../apis/payments";
-import { fetchUserInfo } from "../store/slices/userSlice";
-import useDefaultErrorHandler from "../hooks/useDefaultErrorHandler";
+import { paymentApprovalAndUserUpgrade } from "../../apis/payments";
+import { fetchUserInfo } from "../../store/slices/userSlice";
+import useDefaultErrorHandler from "../../hooks/useDefaultErrorHandler";
 
 export default function PaymentCompletePage() {
   const [isApproving, setIsApproving] = useState(true);

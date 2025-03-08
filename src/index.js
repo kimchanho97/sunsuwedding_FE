@@ -8,12 +8,6 @@ import "./index.css";
 import reportWebVitals from "./reportWebVitals";
 import { persistor, store } from "./store";
 
-// if (process.env.NODE_ENV === "development") {
-//   // eslint-disable-next-line global-require
-//   const { worker } = require("./mocks/browser");
-//   worker.start();
-// }
-
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {

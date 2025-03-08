@@ -1,5 +1,5 @@
-import FavoriteListHeader from "../components/favorite/FavoriteListHeader";
-import FavoriteListTemplate from "../components/favorite/FavoriteListTemplate";
+import FavoriteListHeader from "../../components/favorite/FavoriteListHeader";
+import FavoriteListTemplate from "../../components/favorite/FavoriteListTemplate";
 
 const FavoriteListPage = () => {
   return (

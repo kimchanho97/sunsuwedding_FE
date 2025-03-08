@@ -1,6 +1,6 @@
-import BackButtonHeader from "../components/common/BackButtonHeader";
-import PrivacyPolicyData from "../components/common/PrivacyPolicyData";
-import useScrollToTop from "../hooks/useScrollToTop";
+import BackButtonHeader from "../../components/common/BackButtonHeader";
+import PrivacyPolicyData from "../../components/common/PrivacyPolicyData";
+import useScrollToTop from "../../hooks/useScrollToTop";
 
 const PrivacyPolicyPage = () => {
   useScrollToTop();

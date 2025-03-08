@@ -1,6 +1,6 @@
-import BackButtonHeader from "../components/common/BackButtonHeader";
-import TermsData from "../components/common/TermsData";
-import useScrollToTop from "../hooks/useScrollToTop";
+import BackButtonHeader from "../../components/common/BackButtonHeader";
+import TermsData from "../../components/common/TermsData";
+import useScrollToTop from "../../hooks/useScrollToTop";
 
 const TermsPage = () => {
   useScrollToTop();

@@ -1,6 +1,5 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { getUserInfo } from "../../apis/user";
-import { getAvatarUrl } from "../../utils/firebase";
 
 const initialState = {
   isLogged: false,
@@ -16,18 +15,6 @@ export const fetchUserInfo = createAsyncThunk(
     try {
       const response = await getUserInfo();
       return response.response;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
-    }
-  },
-);
-
-export const fetchAvatar = createAsyncThunk(
-  "user/fetchAvatar",
-  async (userId, thunkAPI) => {
-    try {
-      const response = await getAvatarUrl(userId);
-      return response;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
     }

@@ -1,13 +1,13 @@
 import { useEffect } from "react";
 import { useQuery, useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
-import { getReviewDetail } from "../apis/review";
-import Spinner from "../components/common/atoms/Spinner";
-import ReviewUpdateHeader from "../components/review/ReviewUpdateHeader";
-import ReviewUpdateTemplate from "../components/review/ReviewUpdateTemplate";
-import usePreventGoBack from "../hooks/usePreventGoBack";
-import usePreventRefresh from "../hooks/usePreventRefresh";
-import useDefaultErrorHandler from "../hooks/useDefaultErrorHandler";
+import { getReviewDetail } from "../../apis/review";
+import Spinner from "../../components/common/atoms/Spinner";
+import ReviewUpdateHeader from "../../components/review/ReviewUpdateHeader";
+import ReviewUpdateTemplate from "../../components/review/ReviewUpdateTemplate";
+import usePreventGoBack from "../../hooks/usePreventGoBack";
+import usePreventRefresh from "../../hooks/usePreventRefresh";
+import useDefaultErrorHandler from "../../hooks/useDefaultErrorHandler";
 
 export default function ReviewUpdatePage() {
   const { reviewId } = useParams();

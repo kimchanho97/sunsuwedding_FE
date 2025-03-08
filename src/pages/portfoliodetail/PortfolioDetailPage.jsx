@@ -1,10 +1,10 @@
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
-import { getPortfolioDetail } from "../apis/portfolio";
-import Spinner from "../components/common/atoms/Spinner";
-import PortfolioDetailHeader from "../components/portfoliodetail/PortfolioDetailHeader";
-import PortfolioDetailTemplate from "../components/portfoliodetail/PortfolioDetailTemplate";
-import useDefaultErrorHandler from "../hooks/useDefaultErrorHandler";
+import { getPortfolioDetail } from "../../apis/portfolio";
+import Spinner from "../../components/common/atoms/Spinner";
+import PortfolioDetailHeader from "../../components/portfoliodetail/PortfolioDetailHeader";
+import PortfolioDetailTemplate from "../../components/portfoliodetail/PortfolioDetailTemplate";
+import useDefaultErrorHandler from "../../hooks/useDefaultErrorHandler";
 
 // done test
 const PortfolioDetailPage = () => {

@@ -9,10 +9,10 @@ import {
 } from "firebase/database";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import ChatListHeaderRow from "../components/chat/ChatListHeaderRow";
-import ChatRoomItem from "../components/chat/ChatRoomItem";
-import Spinner from "../components/common/atoms/Spinner";
-import "../firebase";
+import ChatListHeaderRow from "../../components/chat/ChatListHeaderRow";
+import ChatRoomItem from "../../components/chat/ChatRoomItem";
+import Spinner from "../../components/common/atoms/Spinner";
+import "../../firebase";
 
 export default function ChatListPage() {
   const { userInfo } = useSelector((state) => state.user);

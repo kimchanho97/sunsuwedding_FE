@@ -1,15 +1,13 @@
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { deleteAccount } from "../../apis/user";
 import useOpenBottomSheet from "../../hooks/useOpenBottomSheet";
 import { logOut } from "../../store/slices/userSlice";
-import { deleteUserData } from "../../utils/firebase";
 import Button from "../common/atoms/Button";
 import BottomSheet from "../common/bottomsheet/BottomSheet";
 
 // test 완료
 export default function DeleteAccountBottomSheet({ onClose }) {
-  const { userInfo } = useSelector((state) => state.user);
   const [agreePolicy, setAgreePolicy] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const dispatch = useDispatch();
@@ -25,7 +23,6 @@ export default function DeleteAccountBottomSheet({ onClose }) {
     try {
       const response = await deleteAccount();
       if (response.success) {
-        deleteUserData(userInfo.userId);
         dispatch(logOut());
       }
     } catch (error) {

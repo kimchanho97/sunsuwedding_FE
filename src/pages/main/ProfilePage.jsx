@@ -1,5 +1,5 @@
 import React from "react";
-import ProfileTemplate from "../components/profile/ProfileTemplate";
+import ProfileTemplate from "../../components/profile/ProfileTemplate";
 
 export default function ProfilePage() {
   return (

@@ -1,26 +1,26 @@
 import CircularProgress from "@mui/material/CircularProgress";
 import { getDatabase, ref, set } from "firebase/database";
 import React, { useEffect, useRef, useState } from "react";
-import { sendAuthCode, verifyAuthCode } from "../apis/email";
-import { signup } from "../apis/user";
-import BackButtonHeader from "../components/common/BackButtonHeader";
-import CloseButtonPage from "../components/common/CloseButtonPage";
-import PrivacyPolicyData from "../components/common/PrivacyPolicyData";
-import TermsData from "../components/common/TermsData";
-import AlertBox from "../components/common/accounts/AlertBox";
-import InputGroup from "../components/common/accounts/InputGroup";
-import SignupCompletionSheet from "../components/common/accounts/SignupCompletionSheet";
-import Box from "../components/common/atoms/Box";
-import Button from "../components/common/atoms/Button";
-import Container from "../components/common/atoms/Container";
-import Label from "../components/common/atoms/Label";
-import Timer from "../components/common/atoms/Timer";
-import "../firebase";
-import useDefaultErrorHander from "../hooks/useDefaultErrorHandler";
-import useInput from "../hooks/useInput";
-import useOpenBottomSheet from "../hooks/useOpenBottomSheet";
-import { validateEmail, validatePassword } from "../utils";
-import { defaultAvatarUrl } from "../utils/constants";
+import { sendAuthCode, verifyAuthCode } from "../../apis/email";
+import { signup } from "../../apis/user";
+import BackButtonHeader from "../../components/common/BackButtonHeader";
+import CloseButtonPage from "../../components/common/CloseButtonPage";
+import PrivacyPolicyData from "../../components/common/PrivacyPolicyData";
+import TermsData from "../../components/common/TermsData";
+import AlertBox from "../../components/common/accounts/AlertBox";
+import InputGroup from "../../components/common/accounts/InputGroup";
+import SignupCompletionSheet from "../../components/common/accounts/SignupCompletionSheet";
+import Box from "../../components/common/atoms/Box";
+import Button from "../../components/common/atoms/Button";
+import Container from "../../components/common/atoms/Container";
+import Label from "../../components/common/atoms/Label";
+import Timer from "../../components/common/atoms/Timer";
+import "../../firebase";
+import useDefaultErrorHander from "../../hooks/useDefaultErrorHandler";
+import useInput from "../../hooks/useInput";
+import useOpenBottomSheet from "../../hooks/useOpenBottomSheet";
+import { validateEmail, validatePassword } from "../../utils";
+import { defaultAvatarUrl } from "../../utils/constants";
 
 const USER_TYPE = {
   COUPLE: 1,

@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import MainCarousel from "../components/main/MainCarousel";
-import MainHeaderRow from "../components/main/MainHeaderRow";
-import MainSearchBar from "../components/main/MainSearchBar";
-import InProgressQuotationBanner from "../components/main/InProgressQuotationBanner";
-import Footer from "../components/common/Footer";
-import MainBestReview from "../components/main/MainBestReview";
+import MainCarousel from "../../components/main/MainCarousel";
+import MainHeaderRow from "../../components/main/MainHeaderRow";
+import MainSearchBar from "../../components/main/MainSearchBar";
+import InProgressQuotationBanner from "../../components/main/InProgressQuotationBanner";
+import Footer from "../../components/common/Footer";
+import MainBestReview from "../../components/main/MainBestReview";
 
 export default function MainPage() {
   const [isSearchBarOpen, setIsSearchBarOpen] = useState(false);

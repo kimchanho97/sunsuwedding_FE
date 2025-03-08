@@ -13,14 +13,14 @@ import {
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import ChatHeader from "../components/chat/ChatHeader";
-import ChatInput from "../components/chat/ChatInput";
-import ChatMessage from "../components/chat/ChatMessage";
-import DateSeperationLine from "../components/chat/DateSeperationLine";
-import Spinner from "../components/common/atoms/Spinner";
-import "../firebase";
-import useChatRoom from "../hooks/useChatRoom";
-import { convertToDate } from "../utils/convert";
+import ChatHeader from "../../components/chat/ChatHeader";
+import ChatInput from "../../components/chat/ChatInput";
+import ChatMessage from "../../components/chat/ChatMessage";
+import DateSeperationLine from "../../components/chat/DateSeperationLine";
+import Spinner from "../../components/common/atoms/Spinner";
+import "../../firebase";
+import useChatRoom from "../../hooks/useChatRoom";
+import { convertToDate } from "../../utils/convert";
 
 export default function ChatRoomPage() {
   const [messages, setMessages] = useState([]);

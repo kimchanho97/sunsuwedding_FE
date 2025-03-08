@@ -1,5 +1,5 @@
-import QuotationCollectTemplate from "../components/quotation/QuotationCollectTemplate";
-import QuotationCollectHeader from "../components/quotation/QuotationCollectHeader";
+import QuotationCollectTemplate from "../../components/quotation/QuotationCollectTemplate";
+import QuotationCollectHeader from "../../components/quotation/QuotationCollectHeader";
 
 const QuotationCollectPage = () => {
   return (

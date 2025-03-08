@@ -30,8 +30,3 @@ export const getUserInfo = async () => {
   const response = await instance.get("/api/user/info");
   return response.data;
 };
-
-export const userUpgrade = async () => {
-  const response = await instance.post("/api/user/upgrade");
-  return response.data;
-};
