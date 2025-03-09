@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { useSearchParams } from "react-router-dom";
 import useDefaultErrorHandler from "../../hooks/useDefaultErrorHandler";
 import useFetchPortfolios from "../../hooks/useFetchPortfolios";
 import SearchBar from "../common/SearchBar";
@@ -10,22 +9,20 @@ import FilterForm from "./FilterForm";
 import PortfolioGrid from "./PortfolioGrid";
 import SearchHeaderRow from "./SearchHeaderRow";
 
-// done test
 const PortfolioTemplate = () => {
   const bottomObserver = useRef(null);
   const [isSearchBarOpen, setIsSearchBarOpen] = useState(false);
   const [isFilterFormOpen, setIsFilterFormOpen] = useState(false);
-  const [searchParams] = useSearchParams();
   const { defaultErrorHandler } = useDefaultErrorHandler();
 
-  const [name, setName] = useState(searchParams.get("name") || "");
+  const [name, setName] = useState(null);
   const [selectedRegion, setSelectedRegion] = useState(null);
   const [prices, setPrices] = useState([0, 10_000_000]);
 
-  const [queryName, setQueryName] = useState(searchParams.get("name") || "");
+  const [queryName, setQueryName] = useState(null);
   const [queryLocation, setQueryLocation] = useState(null);
-  const [queryMinPrice, setQueryMinPrice] = useState(0);
-  const [queryMaxPrice, setQueryMaxPrice] = useState(-1);
+  const [queryMinPrice, setQueryMinPrice] = useState(null);
+  const [queryMaxPrice, setQueryMaxPrice] = useState(null);
 
   const {
     isFetchingNextPage, // 다음 페이지를 가져오는 요청이 진행 중인지 여부

@@ -17,6 +17,7 @@ export default function CreatePortfolioPage() {
     getPortfolioSelf,
     {
       keepPreviousData: true,
+      refetchOnWindowFocus: false,
       onError: (error) => {
         defaultErrorHandler(error);
       },

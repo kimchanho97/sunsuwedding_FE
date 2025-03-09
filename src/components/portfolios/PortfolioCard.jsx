@@ -66,9 +66,12 @@ const PortfolioCard = ({ portfolio, setFavorites }) => {
   };
 
   return (
-    <Card to={`/portfolios/${portfolio.id}`} className="portfolio-card">
+    <Card
+      to={`/portfolios/${portfolio.portfolioId}`}
+      className="portfolio-card"
+    >
       <SquarePhoto
-        src={portfolio.image}
+        src={portfolio.thumbnail}
         alt={`${portfolio.plannerName}플래너 소개 사진`}
         className="portfolio-image"
       />
@@ -87,25 +90,25 @@ const PortfolioCard = ({ portfolio, setFavorites }) => {
         </div>
         <div className="planner-price flex pt-[1px] text-xs">
           <em className="emph-price font-bold not-italic">
-            {comma(portfolio.price)}
+            {comma(portfolio.totalPrice)}
           </em>
           원
         </div>
         <div className="planner-contract-count flex pt-[1px] text-xs text-blue-sunsu items-center">
-          {portfolio.avgStars !== 0 && (
+          {portfolio.averageRating !== 0 && (
             <>
               <span className="">
                 <StarIcon className="w-[12px] h-[12px] mb-[1px] mr-[3px] justify-center" />
               </span>
               <span className="text-black mr-[3px]">
-                {portfolio.avgStars.toFixed(1)}
+                {portfolio.averageRating.toFixed(1)}
                 {" |"}
               </span>
             </>
           )}
           <span className="mr-auto">
             <em className="emph-count font-bold not-italic">
-              {comma(portfolio.contractCount)}
+              {comma(portfolio.contractedCount)}
             </em>
             건 매칭
           </span>
@@ -114,7 +117,7 @@ const PortfolioCard = ({ portfolio, setFavorites }) => {
               <Button
                 className=" py-[9px] px-[8px] flex justify-end items-end "
                 onClick={() => {
-                  if (portfolio.isLiked) {
+                  if (portfolio.isFavorited) {
                     handleDeleteFavorite();
                   } else {
                     handleAddFavorite();
@@ -122,7 +125,7 @@ const PortfolioCard = ({ portfolio, setFavorites }) => {
                 }}
                 disabled={isSubmitting}
               >
-                {portfolio.isLiked ? (
+                {portfolio.isFavorited ? (
                   <HeartIcon
                     className="w-[11px] h-[10px]"
                     aria-label="찜하기 취소"

@@ -7,9 +7,16 @@ export const getPortfolioList = async (
   minPrice,
   maxPrice,
 ) => {
-  const response = await instance.get(
-    `/api/portfolio/v1?page=${nextCursor}&name=${name}&location=${location}&minPrice=${minPrice}&maxPrice=${maxPrice}`,
-  );
+  const params = new URLSearchParams();
+
+  // ✅ null이 아닌 값만 추가
+  params.append("page", nextCursor);
+  if (name) params.append("name", name);
+  if (location) params.append("location", location);
+  if (minPrice) params.append("minPrice", minPrice);
+  if (maxPrice) params.append("maxPrice", maxPrice);
+
+  const response = await instance.get(`/api/portfolio/v1?${params.toString()}`);
   return response.data;
 };
 
@@ -38,18 +45,31 @@ export const createPortfolio = async (portfolioData) => {
 
 export const updatePortfolio = async (portfolioData) => {
   const formData = new FormData();
-  const { images, ...portfolioInfo } = portfolioData;
+  const { existingImages, newImages, deletedImages, ...portfolioInfo } =
+    portfolioData;
+
+  // 📌 포트폴리오 정보 추가 (JSON 변환 후 FormData에 추가)
   formData.append(
     "portfolio",
     new Blob([JSON.stringify(portfolioInfo)], { type: "application/json" }),
   );
 
-  // 이미지 파일들을 FormData에 추가
-  images.forEach((image) => {
-    formData.append("images", image); // ✅ 여러 개의 파일을 `images[]`로 추가
+  // 📌 기존 이미지(S3 URL) 포함
+  existingImages.forEach((imageUrl) => {
+    formData.append("existingImages", imageUrl); // S3 URL 그대로 전달
   });
 
-  // Axios 요청 (multipart/form-data)
+  // 📌 새로 추가된 이미지 포함
+  newImages.forEach((image) => {
+    formData.append("newImages", image); // 새 파일 추가
+  });
+
+  // 📌 삭제할 이미지 URL 포함
+  deletedImages.forEach((imageUrl) => {
+    formData.append("deletedImages", imageUrl);
+  });
+
+  // 📌 Axios 요청
   return instance.put("/api/portfolio", formData, {
     headers: { "Content-Type": "multipart/form-data" },
   });

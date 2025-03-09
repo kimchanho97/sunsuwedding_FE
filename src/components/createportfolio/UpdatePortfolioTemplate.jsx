@@ -23,7 +23,9 @@ export default function UpdatePortfolioTemplate({ portfolio }) {
       };
     }),
   ]);
-  const [images, setImages] = useState([...portfolio.images]);
+  const [existingImages, setExistingImages] = useState([...portfolio.images]);
+  const [newImages, setNewImages] = useState([]);
+  const [deletedImages, setDeletedImages] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false); // login api 호출 중인지 아닌지 확인
   const [isUploading, setIsUploading] = useState(false);
 
@@ -74,7 +76,7 @@ export default function UpdatePortfolioTemplate({ portfolio }) {
       );
       return;
     }
-    if (images.length === 0) {
+    if (existingImages.length + newImages.length === 0) {
       openBottomSheetHandler({
         bottomSheet: "messageBottomSheet",
         message: "포트폴리오 사진을 추가해주세요.",
@@ -89,7 +91,9 @@ export default function UpdatePortfolioTemplate({ portfolio }) {
           itemPrice: uncomma(item.itemPrice),
         };
       }),
-      images,
+      existingImages, // 기존 S3 이미지 URL 유지
+      newImages, // 새롭게 추가된 이미지 파일들
+      deletedImages, // 삭제된 기존 이미지 목록
       title: titleRef.current.value,
       description: descriptionRef.current.value,
       location,
@@ -173,8 +177,11 @@ export default function UpdatePortfolioTemplate({ portfolio }) {
         />
         {/* 사진 */}
         <ImageUploadZone
-          images={images}
-          setImages={setImages}
+          existingImages={existingImages}
+          setExistingImages={setExistingImages}
+          newImages={newImages}
+          setNewImages={setNewImages}
+          setDeletedImages={setDeletedImages}
           setIsUploading={setIsUploading}
         />
         <Button

@@ -6,14 +6,20 @@ import { ReactComponent as CloseIcon } from "../../assets/close-01.svg";
 import Photo from "./atoms/Photo";
 import useOpenBottomSheet from "../../hooks/useOpenBottomSheet";
 
-export default function ImageUploadZone({ images, setImages, setIsUploading }) {
+export default function ImageUploadZone({
+  existingImages = [],
+  setExistingImages, // 기존 S3 URL 목록
+  newImages,
+  setNewImages, // 새로 추가된 파일 목록
+  setDeletedImages, // 삭제된 기존 이미지 목록
+  setIsUploading, // 업로드 상태 관리
+}) {
   const { openBottomSheetHandler } = useOpenBottomSheet();
   const [previewImages, setPreviewImages] = useState([]); // 미리보기 이미지
   const isPWA = window.matchMedia("(display-mode: standalone)").matches;
   const allowedExtensions = ["jpg", "jpeg", "png", "gif", "webp", "heic"];
 
   useEffect(() => {
-    console.log("PWA 모드:", isPWA);
     if (isPWA) {
       openBottomSheetHandler({
         bottomSheet: "messageBottomSheet",
@@ -97,9 +103,7 @@ export default function ImageUploadZone({ images, setImages, setIsUploading }) {
         setPreviewImages((prev) => [...prev, reader.result]); // ✅ 렌더링용 (Base64)
       };
       reader.readAsDataURL(compressedFile);
-
-      // ✅ 바이너리 데이터 저장 (Base64 인코딩 없이)
-      setImages([...images, compressedFile]);
+      setNewImages((prev) => [...prev, compressedFile]); // 새 이미지 추가
     } catch (error) {
       console.error("이미지 변환/압축 실패:", error);
     } finally {
@@ -108,9 +112,15 @@ export default function ImageUploadZone({ images, setImages, setIsUploading }) {
   };
 
   // ✅ 이미지 삭제 핸들러
-  const handleDeleteImage = (index) => {
-    setPreviewImages((prev) => prev.filter((_, i) => i !== index));
-    setImages((prev) => prev.filter((_, i) => i !== index));
+  const handleDeleteImage = (index, isExisting) => {
+    if (isExisting) {
+      // 기존 이미지 삭제 → S3에서도 삭제해야 하므로 deletedImages 배열에 추가
+      setDeletedImages((prev) => [...prev, existingImages[index]]);
+      setExistingImages((prev) => prev.filter((_, i) => i !== index));
+    } else {
+      // 새로 추가한 이미지 삭제
+      setNewImages((prev) => prev.filter((_, i) => i !== index));
+    }
   };
 
   return (
@@ -122,6 +132,27 @@ export default function ImageUploadZone({ images, setImages, setIsUploading }) {
         </h6>
       </div>
       <div className="grid w-full grid-cols-3 gap-2">
+        {/* ✅ 기존 S3 이미지 렌더링 */}
+        {existingImages?.map((image, idx) => (
+          <div
+            className="relative w-full h-0"
+            style={{ paddingBottom: "100%" }}
+            // eslint-disable-next-line react/no-array-index-key
+            key={idx}
+          >
+            <Photo
+              src={image}
+              alt="기존 이미지"
+              className="absolute w-[98%] h-[98%] object-cover object-center rounded-[10px] left-0 bottom-0"
+            />
+            <button
+              onClick={() => handleDeleteImage(idx, true)}
+              className="absolute top-0 right-0 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center"
+            >
+              X
+            </button>
+          </div>
+        ))}
         {previewImages.map((imageItem, idx) => (
           <div
             className="relative w-full h-0"
@@ -142,7 +173,7 @@ export default function ImageUploadZone({ images, setImages, setIsUploading }) {
             </button>
           </div>
         ))}
-        {images.length < 5 && (
+        {existingImages.length + newImages.length < 5 && (
           <label
             htmlFor="photo"
             className="cursor-pointer relative w-full h-0 pb-[100%]"

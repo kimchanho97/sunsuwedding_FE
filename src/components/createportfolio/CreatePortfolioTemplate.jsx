@@ -12,7 +12,6 @@ import Spinner from "../common/atoms/Spinner";
 import ItemsInfo from "./ItemsInfo";
 import SelectRegion from "./SelectRegion";
 
-// done test
 export default function CreatePortfolioTemplate() {
   const [location, setLocation] = useState("");
   const [items, setItems] = useState([{ itemName: "", itemPrice: "0" }]);
@@ -167,8 +166,8 @@ export default function CreatePortfolioTemplate() {
         />
         {/* 사진 */}
         <ImageUploadZone
-          images={images}
-          setImages={setImages}
+          newImages={images}
+          setNewImages={setImages}
           setIsUploading={setIsUploading}
         />
         <Button
