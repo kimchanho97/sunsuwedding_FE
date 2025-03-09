@@ -1,7 +1,7 @@
 import { instance } from "./index";
 
 export const getPortfolioList = async (
-  nextCursor,
+  page,
   name,
   location,
   minPrice,
@@ -10,13 +10,35 @@ export const getPortfolioList = async (
   const params = new URLSearchParams();
 
   // ✅ null이 아닌 값만 추가
-  params.append("page", nextCursor);
+  params.append("page", page);
   if (name) params.append("name", name);
   if (location) params.append("location", location);
   if (minPrice) params.append("minPrice", minPrice);
   if (maxPrice) params.append("maxPrice", maxPrice);
 
   const response = await instance.get(`/api/portfolio/v1?${params.toString()}`);
+  return response.data;
+};
+
+export const getPortfolioListCursor = async (
+  cursor,
+  name,
+  location,
+  minPrice,
+  maxPrice,
+) => {
+  const params = new URLSearchParams();
+
+  // ✅ 첫 요청일 경우, cursor를 추가하지 않음
+  if (cursor !== null) {
+    params.append("cursor", cursor);
+  }
+  if (name) params.append("name", name);
+  if (location) params.append("location", location);
+  if (minPrice) params.append("minPrice", minPrice);
+  if (maxPrice) params.append("maxPrice", maxPrice);
+
+  const response = await instance.get(`/api/portfolio/v3?${params.toString()}`);
   return response.data;
 };
 
