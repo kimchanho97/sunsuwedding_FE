@@ -1,8 +1,7 @@
 import { instance } from "./index";
 
 export const createChatRoom = async (plannerId) => {
-  const response = await instance.post("/api/chat", {
+  return instance.post("/api/chat/room", {
     plannerId,
   });
-  return response.data;
 };

@@ -10,12 +10,11 @@ export const getPortfolioList = async (
   const response = await instance.get(
     `/api/portfolio/v1?page=${nextCursor}&name=${name}&location=${location}&minPrice=${minPrice}&maxPrice=${maxPrice}`,
   );
-  return response.data.response;
+  return response.data;
 };
 
 export const getPortfolioDetail = async (portfolioId) => {
-  const response = await instance.get(`/api/portfolio/${portfolioId}`);
-  return response.data.response;
+  return instance.get(`/api/portfolio/${portfolioId}`);
 };
 
 export const createPortfolio = async (portfolioData) => {
@@ -29,7 +28,7 @@ export const createPortfolio = async (portfolioData) => {
     career,
     partnerCompany,
   } = portfolioData;
-  const response = await instance.post("/api/portfolio", {
+  return instance.post("/api/portfolio", {
     plannerName,
     items,
     images,
@@ -39,7 +38,6 @@ export const createPortfolio = async (portfolioData) => {
     career,
     partnerCompany,
   });
-  return response.data;
 };
 
 export const updatePortfolio = async (portfolioData) => {
@@ -53,7 +51,7 @@ export const updatePortfolio = async (portfolioData) => {
     career,
     partnerCompany,
   } = portfolioData;
-  const response = await instance.put("/api/portfolio", {
+  return instance.put("/api/portfolio", {
     plannerName,
     items,
     images,
@@ -63,15 +61,12 @@ export const updatePortfolio = async (portfolioData) => {
     career,
     partnerCompany,
   });
-  return response.data;
 };
 
 export const deletePortfolio = async () => {
-  const response = await instance.delete("/api/portfolio");
-  return response.data;
+  return instance.delete("/api/portfolio");
 };
 
 export const getPortfolioSelf = async () => {
-  const res = await instance.get("/api/portfolio/self");
-  return res.data.response;
+  return instance.get("/api/portfolio/me");
 };

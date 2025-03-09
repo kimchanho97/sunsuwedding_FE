@@ -9,7 +9,7 @@ export default function MembershipBottomSheet({ onClose }) {
     <BottomSheet onClose={onClose}>
       <div className="flex flex-col font-bold pb-[70px] text-lg">
         <span>
-          {userInfo.username}님은 {userInfo.payedAt}부터
+          {userInfo.username}님은 {userInfo.upgradeAt}부터
         </span>
         <span>순수 멤버십을 이용 중입니다.</span>
       </div>

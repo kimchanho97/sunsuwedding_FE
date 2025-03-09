@@ -6,11 +6,9 @@ export const getFavoriteList = async (page) => {
 };
 
 export const addFavorite = async ({ portfolioId }) => {
-  const response = await instance.post(`/api/favorite/${portfolioId}`);
-  return response.data.response;
+  return instance.post(`/api/favorite/${portfolioId}`);
 };
 
 export const deleteFavorite = async ({ portfolioId }) => {
-  const response = await instance.delete(`/api/favorite/${portfolioId}`);
-  return response.data.response;
+  return instance.delete(`/api/favorite/${portfolioId}`);
 };
