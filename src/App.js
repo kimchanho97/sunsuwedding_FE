@@ -18,6 +18,9 @@ import SearchPage from "./pages/portfolios/SearchPage";
 import SignupPage from "./pages/common/SignupPage";
 import TermsPage from "./pages/main/TermsPage";
 import DuplicatedCheckLayout from "./layouts/DuplicatedCheckLayout";
+import QuotationCollectPage from "./pages/quotation/QuotationCollectPage";
+import WritableReviewListPage from "./pages/review/WritableReviewListPage";
+import ReviewListPage from "./pages/review/ReviewListPage";
 
 function App() {
   // 주석
@@ -57,6 +60,18 @@ function App() {
               element={<CreatePortfolioPage />}
             />
             <Route path="/profile/favorites" element={<FavoriteListPage />} />
+            <Route
+              path="/quotations/collect"
+              element={<QuotationCollectPage />}
+            />
+            <Route
+              path="/profile/reviews/writable"
+              element={<WritableReviewListPage />}
+            />
+            <Route
+              path="/profile/reviews/collect"
+              element={<ReviewListPage />}
+            />
             {/* <Route path="/quotations/:chatId" element={<QuotationListPage />} /> */}
             {/* <Route */}
             {/*  path="/quotations/create/:chatId" */}
@@ -67,24 +82,12 @@ function App() {
             {/*  element={<QuotationUpdatePage />} */}
             {/* /> */}
             {/* <Route */}
-            {/*  path="/quotations/collect" */}
-            {/*  element={<QuotationCollectPage />} */}
-            {/* /> */}
-            {/* <Route */}
             {/*  path="/profile/reviews/create/:chatId" */}
             {/*  element={<ReviewCreatePage />} */}
             {/* /> */}
             {/* <Route */}
             {/*  path="/profile/reviews/update/:reviewId" */}
             {/*  element={<ReviewUpdatePage />} */}
-            {/* /> */}
-            {/* <Route */}
-            {/*  path="/profile/reviews/writable" */}
-            {/*  element={<WritableReviewListPage />} */}
-            {/* /> */}
-            {/* <Route */}
-            {/*  path="/profile/reviews/collect" */}
-            {/*  element={<ReviewListPage />} */}
             {/* /> */}
           </Route>
         </Route>

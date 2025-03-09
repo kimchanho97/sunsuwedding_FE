@@ -34,11 +34,9 @@ export const deleteProfileImage = async () => {
 };
 
 export const deleteAccount = async () => {
-  const response = await instance.delete("/api/user");
-  return response.data;
+  return instance.delete("/api/user");
 };
 
 export const getUserInfo = async () => {
-  const response = await instance.get("/api/user/info");
-  return response.data;
+  return instance.get("/api/user/info");
 };

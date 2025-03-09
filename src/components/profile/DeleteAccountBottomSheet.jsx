@@ -1,17 +1,16 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { deleteAccount } from "../../apis/user";
-import useOpenBottomSheet from "../../hooks/useOpenBottomSheet";
 import { logOut } from "../../store/slices/userSlice";
 import Button from "../common/atoms/Button";
 import BottomSheet from "../common/bottomsheet/BottomSheet";
+import useDefaultErrorHandler from "../../hooks/useDefaultErrorHandler";
 
-// test 완료
 export default function DeleteAccountBottomSheet({ onClose }) {
   const [agreePolicy, setAgreePolicy] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const dispatch = useDispatch();
-  const { openBottomSheetHandler } = useOpenBottomSheet();
+  const { defaultErrorHandler } = useDefaultErrorHandler();
 
   const handleAgreement = () => {
     setAgreePolicy(!agreePolicy);
@@ -21,15 +20,10 @@ export default function DeleteAccountBottomSheet({ onClose }) {
     if (!agreePolicy) return;
     setIsSubmitting(true);
     try {
-      const response = await deleteAccount();
-      if (response.success) {
-        dispatch(logOut());
-      }
+      await deleteAccount();
+      dispatch(logOut());
     } catch (error) {
-      if (error?.response.status === 500) {
-        onClose();
-        openBottomSheetHandler({ bottomSheet: "serverErrorBottomSheet" });
-      }
+      defaultErrorHandler(error);
     }
     setIsSubmitting(false);
   };

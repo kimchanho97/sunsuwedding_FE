@@ -13,9 +13,9 @@ export const fetchUserInfo = createAsyncThunk(
   async (thunkAPI) => {
     try {
       const response = await getUserInfo();
-      return response.response;
+      return response.data;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
+      return thunkAPI.rejectWithValue(error);
     }
   },
 );

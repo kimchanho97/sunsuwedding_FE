@@ -1,5 +1,4 @@
 import { useEffect, useRef } from "react";
-import useDefaultErrorHandler from "../../hooks/useDefaultErrorHandler";
 import useFetchFavorites from "../../hooks/useFetchFavorites";
 import Container from "../common/atoms/Container";
 import Spinner from "../common/atoms/Spinner";
@@ -8,10 +7,8 @@ import NoFavoriteList from "./NoFavoriteList";
 
 const FavoriteListTemplate = () => {
   const bottomObserver = useRef(null);
-  const { defaultErrorHandler } = useDefaultErrorHandler();
   const {
     isFetchingNextPage, // 다음 페이지를 가져오는 요청이 진행 중인지 여부
-    error,
     hasNextPage,
     isLoading,
     isFetching,
@@ -37,14 +34,7 @@ const FavoriteListTemplate = () => {
     };
   }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
-  useEffect(() => {
-    if (error) {
-      defaultErrorHandler(error);
-    }
-  }, [error]);
-
   if (isLoading) return <Spinner />;
-
   return (
     <>
       <Container>
