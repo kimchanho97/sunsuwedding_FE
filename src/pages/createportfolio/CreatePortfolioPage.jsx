@@ -40,7 +40,7 @@ export default function CreatePortfolioPage() {
   return (
     <div className="w-full h-full">
       <CreatePortfolioHeader />
-      {!isLoading && portfolio?.plannerName ? (
+      {!isLoading && portfolio !== null ? (
         <UpdatePortfolioTemplate portfolio={portfolio} />
       ) : (
         <CreatePortfolioTemplate />

@@ -18,48 +18,40 @@ export const getPortfolioDetail = async (portfolioId) => {
 };
 
 export const createPortfolio = async (portfolioData) => {
-  const {
-    plannerName,
-    items,
-    images,
-    title,
-    description,
-    location,
-    career,
-    partnerCompany,
-  } = portfolioData;
-  return instance.post("/api/portfolio", {
-    plannerName,
-    items,
-    images,
-    title,
-    description,
-    location,
-    career,
-    partnerCompany,
+  const formData = new FormData();
+  const { images, ...portfolioInfo } = portfolioData;
+  formData.append(
+    "portfolio",
+    new Blob([JSON.stringify(portfolioInfo)], { type: "application/json" }),
+  );
+
+  // 이미지 파일들을 FormData에 추가
+  images.forEach((image) => {
+    formData.append("images", image); // ✅ 여러 개의 파일을 `images[]`로 추가
+  });
+
+  // Axios 요청 (multipart/form-data)
+  return instance.post("/api/portfolio", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
   });
 };
 
 export const updatePortfolio = async (portfolioData) => {
-  const {
-    plannerName,
-    items,
-    images,
-    title,
-    description,
-    location,
-    career,
-    partnerCompany,
-  } = portfolioData;
-  return instance.put("/api/portfolio", {
-    plannerName,
-    items,
-    images,
-    title,
-    description,
-    location,
-    career,
-    partnerCompany,
+  const formData = new FormData();
+  const { images, ...portfolioInfo } = portfolioData;
+  formData.append(
+    "portfolio",
+    new Blob([JSON.stringify(portfolioInfo)], { type: "application/json" }),
+  );
+
+  // 이미지 파일들을 FormData에 추가
+  images.forEach((image) => {
+    formData.append("images", image); // ✅ 여러 개의 파일을 `images[]`로 추가
+  });
+
+  // Axios 요청 (multipart/form-data)
+  return instance.put("/api/portfolio", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
   });
 };
 
@@ -68,5 +60,6 @@ export const deletePortfolio = async () => {
 };
 
 export const getPortfolioSelf = async () => {
-  return instance.get("/api/portfolio/me");
+  const res = await instance.get("/api/portfolio/me");
+  return res.data;
 };

@@ -12,14 +12,13 @@ import Spinner from "../common/atoms/Spinner";
 import ItemsInfo from "./ItemsInfo";
 import SelectRegion from "./SelectRegion";
 
-// done test
 export default function UpdatePortfolioTemplate({ portfolio }) {
   const { openBottomSheetHandler } = useOpenBottomSheet();
   const [location, setLocation] = useState(portfolio?.location);
   const [items, setItems] = useState([
     ...portfolio.items.map((item) => {
       return {
-        itemTitle: item.itemTitle,
+        itemName: item.itemName,
         itemPrice: comma(item.itemPrice),
       };
     }),
@@ -48,7 +47,7 @@ export default function UpdatePortfolioTemplate({ portfolio }) {
       openMessageBottomSheetAndFocus("지역을 선택해주세요.", locationRef);
       return;
     }
-    if (items.some((item) => !item.itemTitle)) {
+    if (items.some((item) => !item.itemName)) {
       openMessageBottomSheetAndFocus("가격 항목을 모두 입력해주세요.", itemRef);
       return;
     }
@@ -86,7 +85,7 @@ export default function UpdatePortfolioTemplate({ portfolio }) {
       plannerName: userInfo.username,
       items: items.map((item) => {
         return {
-          itemTitle: item.itemTitle,
+          itemName: item.itemName,
           itemPrice: uncomma(item.itemPrice),
         };
       }),

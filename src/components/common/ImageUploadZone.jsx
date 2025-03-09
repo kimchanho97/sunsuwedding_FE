@@ -1,82 +1,104 @@
 import { BsCamera } from "react-icons/bs";
 import heic2any from "heic2any";
 import Compressor from "compressorjs";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ReactComponent as CloseIcon } from "../../assets/close-01.svg";
 import Photo from "./atoms/Photo";
-import { isChrome, isFirefox } from "../../utils/constants";
 import useOpenBottomSheet from "../../hooks/useOpenBottomSheet";
 
 export default function ImageUploadZone({ images, setImages, setIsUploading }) {
   const { openBottomSheetHandler } = useOpenBottomSheet();
+  const [previewImages, setPreviewImages] = useState([]); // 미리보기 이미지
+  const isPWA = window.matchMedia("(display-mode: standalone)").matches;
+  const allowedExtensions = ["jpg", "jpeg", "png", "gif", "webp", "heic"];
 
   useEffect(() => {
-    if (!isChrome && !isFirefox) {
+    console.log("PWA 모드:", isPWA);
+    if (isPWA) {
       openBottomSheetHandler({
         bottomSheet: "messageBottomSheet",
         message:
-          "접속하신 브라우저에서는 고용량 사진 업로드를 지원하지 않습니다. 저용량 사진을 업로드하시거나, 데스크탑 크롬 브라우저를 이용해주세요.",
+          "모바일 환경에서는 일부 브라우저에서 파일 업로드가 제한될 수 있습니다. 문제가 발생하면 크롬 또는 최신 브라우저를 사용해주세요.",
       });
     }
   }, []);
 
-  const returnCompressor = (reader, file) => {
-    return new Compressor(file, {
-      quality: 0.7,
-      mimeType: "image/webp",
-      maxHeight: 1440,
-      maxWidth: 1440,
-      success(result) {
-        const newFile = new File([result], `image${new Date().getTime()}`, {
-          type: result.type,
-        });
-        reader.readAsDataURL(newFile);
-      },
+  // ✅ 이미지 압축 함수
+  const compressImage = (file) => {
+    console.log(`압축 전 용량: ${(file.size / 1024).toFixed(2)} KB`);
+
+    return new Promise((resolve, reject) => {
+      // eslint-disable-next-line no-new
+      new Compressor(file, {
+        quality: 0.75, // 압축률 (0.7~0.8이 가장 균형 잡힌 설정)
+        mimeType: "image/webp", // WEBP로 변환 (파일 크기 절감 효과)
+        maxWidth: 1920, // 최대 너비 (Full HD 해상도)
+        maxHeight: 1920, // 최대 높이 (Full HD 해상도)
+        convertSize: 500000, // 500KB 이상일 때만 WEBP 변환
+        success(result) {
+          console.log(`압축 후 용량: ${(result.size / 1024).toFixed(2)} KB`);
+          resolve(result);
+        },
+        error(err) {
+          reject(err);
+        },
+      });
     });
   };
 
+  // ✅ 파일 추가 핸들러
   const onChangeAddFile = async (e) => {
     setIsUploading(true);
     let addedFile = e.target.files[0];
+    if (!addedFile) {
+      setIsUploading(false);
+      return;
+    }
 
-    if (addedFile) {
-      // 이미지가 아닌 파일 업로드를 방지
-      if (
-        !addedFile.type.match("image") &&
-        !(addedFile.name.split(".")[1].toLowerCase() === "heic")
-      ) {
-        setIsUploading(false);
-        return;
+    // ❌ 허용되지 않은 확장자 거부
+    const fileExtension = addedFile.name.split(".").pop().toLowerCase();
+    if (!allowedExtensions.includes(fileExtension)) {
+      alert("허용되지 않은 이미지 확장자입니다.");
+      setIsUploading(false);
+      return;
+    }
+
+    try {
+      // ✅ HEIC 변환 (HEIC → JPEG)
+      if (fileExtension === "heic") {
+        const blob = addedFile;
+        const resultBlob = await heic2any({ blob, toType: "image/jpeg" });
+
+        addedFile = new File(
+          [resultBlob],
+          `${addedFile.name.split(".")[0]}.jpg`,
+          { type: "image/jpeg", lastModified: new Date().getTime() },
+        );
       }
 
+      // ✅ 이미지 압축
+      const compressedFile = await compressImage(addedFile);
+
+      // ✅ Base64 미리보기 변환
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImages([...images, reader.result]);
-        setIsUploading(false);
+        setPreviewImages((prev) => [...prev, reader.result]); // ✅ 렌더링용 (Base64)
       };
-      if (addedFile.name.split(".")[1].toLowerCase() === "heic") {
-        const blob = addedFile;
-        await heic2any({ blob, toType: "image/jpeg" }).then((resultBlob) => {
-          addedFile = new File(
-            [resultBlob],
-            `${addedFile.name.split(".")[0]}.jpg`,
-            {
-              type: "image/jpeg",
-              lastModified: new Date().getTime(),
-            },
-          );
-          returnCompressor(reader, addedFile);
-        });
-      } else {
-        returnCompressor(reader, addedFile);
-      }
+      reader.readAsDataURL(compressedFile);
+
+      // ✅ 바이너리 데이터 저장 (Base64 인코딩 없이)
+      setImages([...images, compressedFile]);
+    } catch (error) {
+      console.error("이미지 변환/압축 실패:", error);
+    } finally {
+      setIsUploading(false);
     }
   };
 
+  // ✅ 이미지 삭제 핸들러
   const handleDeleteImage = (index) => {
-    const updatedImageItems = [...images];
-    updatedImageItems.splice(index, 1); // 해당 항목 삭제
-    setImages(updatedImageItems); // 이미지 배열 업데이트
+    setPreviewImages((prev) => prev.filter((_, i) => i !== index));
+    setImages((prev) => prev.filter((_, i) => i !== index));
   };
 
   return (
@@ -88,7 +110,7 @@ export default function ImageUploadZone({ images, setImages, setIsUploading }) {
         </h6>
       </div>
       <div className="grid w-full grid-cols-3 gap-2">
-        {images.map((imageItem, idx) => (
+        {previewImages.map((imageItem, idx) => (
           <div
             className="relative w-full h-0"
             style={{ paddingBottom: "100%" }}

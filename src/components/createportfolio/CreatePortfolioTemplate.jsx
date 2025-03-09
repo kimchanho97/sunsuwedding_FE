@@ -15,7 +15,7 @@ import SelectRegion from "./SelectRegion";
 // done test
 export default function CreatePortfolioTemplate() {
   const [location, setLocation] = useState("");
-  const [items, setItems] = useState([{ itemTitle: "", itemPrice: "0" }]);
+  const [items, setItems] = useState([{ itemName: "", itemPrice: "0" }]);
   const [images, setImages] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false); // login api 호출 중인지 아닌지 확인
   const [isUploading, setIsUploading] = useState(false);
@@ -41,7 +41,7 @@ export default function CreatePortfolioTemplate() {
       openMessageBottomSheetAndFocus("지역을 선택해주세요.", locationRef);
       return;
     }
-    if (items.some((item) => !item.itemTitle)) {
+    if (items.some((item) => !item.itemName)) {
       openMessageBottomSheetAndFocus("가격 항목을 모두 입력해주세요.", itemRef);
       return;
     }
@@ -79,7 +79,7 @@ export default function CreatePortfolioTemplate() {
       plannerName: userInfo.username,
       items: items.map((item) => {
         return {
-          itemTitle: item.itemTitle,
+          itemName: item.itemName,
           itemPrice: uncomma(item.itemPrice),
         };
       }),
