@@ -56,6 +56,9 @@ const PortfolioTemplate = () => {
     if (e.isComposing || e.keyCode === 229) return;
     if (e.key === "Enter") {
       setQueryName(name);
+      setQueryMinPrice(null);
+      setQueryMaxPrice(null);
+      setQueryLocation(null);
       handleCloseSearchBar();
     }
   };

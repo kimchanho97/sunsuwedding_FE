@@ -1,7 +1,6 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
 import { useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
 import { addFavorite, deleteFavorite } from "../../apis/favorite";
 import { ReactComponent as HeartOutlinedIcon } from "../../assets/heart-03.svg";
 import { ReactComponent as HeartIcon } from "../../assets/heart-04.svg";
@@ -12,14 +11,9 @@ import Button from "../common/atoms/Button";
 import Card from "../common/atoms/Card";
 import SquarePhoto from "../common/atoms/SquarePhoto";
 
-// done test
-const PortfolioCard = ({ portfolio, setFavorites }) => {
-  const location = useLocation();
+const PortfolioCard = ({ portfolio }) => {
   const { isLogged } = useSelector((state) => state.user);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const cacheKey = useRef(
-    location.pathname === "/favorites" ? "favorites" : "portfolios",
-  );
   const { mutate: addFavoriteMutate } = useMutation(addFavorite);
   const { mutate: deleteFavoriteMutate } = useMutation(deleteFavorite);
   const queryClient = useQueryClient();
@@ -28,10 +22,27 @@ const PortfolioCard = ({ portfolio, setFavorites }) => {
   const handleAddFavorite = () => {
     setIsSubmitting(true);
     addFavoriteMutate(
-      { portfolioId: parseInt(portfolio.id, 10) },
+      { portfolioId: parseInt(portfolio.portfolioId, 10) },
       {
+        onMutate: () => {
+          // ✅ Optimistic UI 적용
+          queryClient.setQueryData(["portfolios"], (oldData) => {
+            if (!oldData) return oldData;
+            return {
+              ...oldData,
+              pages: oldData.pages.map((page) => ({
+                ...page,
+                data: page.data.map((p) =>
+                  p.portfolioId === portfolio.portfolioId
+                    ? { ...p, isFavorited: true }
+                    : p,
+                ),
+              })),
+            };
+          });
+        },
         onSuccess: () => {
-          queryClient.invalidateQueries(cacheKey.current);
+          queryClient.invalidateQueries(["portfolios"]);
           setIsSubmitting(false);
         },
         onError: (error) => {
@@ -45,16 +56,27 @@ const PortfolioCard = ({ portfolio, setFavorites }) => {
   const handleDeleteFavorite = () => {
     setIsSubmitting(true);
     deleteFavoriteMutate(
-      { portfolioId: parseInt(portfolio.id, 10) },
+      { portfolioId: parseInt(portfolio.portfolioId, 10) },
       {
-        onSuccess: async () => {
-          if (location.pathname === "/search") {
-            queryClient.invalidateQueries(cacheKey.current);
-          } else {
-            setFavorites((prev) =>
-              prev.filter((item) => item.id !== portfolio.id),
-            );
-          }
+        onMutate: () => {
+          // ✅ Optimistic UI 적용
+          queryClient.setQueryData(["portfolios"], (oldData) => {
+            if (!oldData) return oldData;
+            return {
+              ...oldData,
+              pages: oldData.pages.map((page) => ({
+                ...page,
+                data: page.data.map((p) =>
+                  p.portfolioId === portfolio.portfolioId
+                    ? { ...p, isFavorited: false }
+                    : p,
+                ),
+              })),
+            };
+          });
+        },
+        onSuccess: () => {
+          queryClient.invalidateQueries(["portfolios"]);
           setIsSubmitting(false);
         },
         onError: (error) => {
@@ -95,17 +117,13 @@ const PortfolioCard = ({ portfolio, setFavorites }) => {
           원
         </div>
         <div className="planner-contract-count flex pt-[1px] text-xs text-blue-sunsu items-center">
-          {portfolio.averageRating !== 0 && (
-            <>
-              <span className="">
-                <StarIcon className="w-[12px] h-[12px] mb-[1px] mr-[3px] justify-center" />
-              </span>
-              <span className="text-black mr-[3px]">
-                {portfolio.averageRating.toFixed(1)}
-                {" |"}
-              </span>
-            </>
-          )}
+          <span className="">
+            <StarIcon className="w-[12px] h-[12px] mb-[1px] mr-[3px] justify-center" />
+          </span>
+          <span className="text-black mr-[3px]">
+            {portfolio.averageRating.toFixed(1)}
+            {" |"}
+          </span>
           <span className="mr-auto">
             <em className="emph-count font-bold not-italic">
               {comma(portfolio.contractedCount)}
@@ -116,13 +134,11 @@ const PortfolioCard = ({ portfolio, setFavorites }) => {
             <div className=" absolute right-0 bottom-0">
               <Button
                 className=" py-[9px] px-[8px] flex justify-end items-end "
-                onClick={() => {
-                  if (portfolio.isFavorited) {
-                    handleDeleteFavorite();
-                  } else {
-                    handleAddFavorite();
-                  }
-                }}
+                onClick={
+                  portfolio.isFavorited
+                    ? handleDeleteFavorite
+                    : handleAddFavorite
+                }
                 disabled={isSubmitting}
               >
                 {portfolio.isFavorited ? (

@@ -2,8 +2,8 @@ import { useEffect, useRef } from "react";
 import useFetchFavorites from "../../hooks/useFetchFavorites";
 import Container from "../common/atoms/Container";
 import Spinner from "../common/atoms/Spinner";
-import PortfolioGrid from "../portfolios/PortfolioGrid";
 import NoFavoriteList from "./NoFavoriteList";
+import FavoritePortfolioGrid from "./FavoritePortfolioGrid";
 
 const FavoriteListTemplate = () => {
   const bottomObserver = useRef(null);
@@ -41,7 +41,7 @@ const FavoriteListTemplate = () => {
         {!isFetching && favorites?.length === 0 ? (
           <NoFavoriteList />
         ) : (
-          <PortfolioGrid
+          <FavoritePortfolioGrid
             portfolios={favorites}
             isFetchingNextPage={isFetchingNextPage}
             setFavorites={setFavorites}

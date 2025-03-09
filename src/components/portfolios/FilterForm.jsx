@@ -27,7 +27,7 @@ export default function FilterForm({
     // eslint-disable-next-line prefer-destructuring
     setQueryMinPrice(prices[0]);
     if (prices[1] === 10_000_000) {
-      setQueryMaxPrice(-1);
+      setQueryMaxPrice(null);
       handleFilterForm();
       return;
     }

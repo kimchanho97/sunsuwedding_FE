@@ -14,8 +14,8 @@ export default function useFetchPortfolios({
       getPortfolioList(pageParam, name, location, minPrice, maxPrice),
     {
       getNextPageParam: (lastPage) => {
-        if (lastPage?.cursor) {
-          return lastPage?.cursor;
+        if (lastPage?.nextCursor) {
+          return lastPage?.nextCursor;
         }
         return undefined;
       },
