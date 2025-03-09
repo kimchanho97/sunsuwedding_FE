@@ -1,5 +1,4 @@
 import SquarePhoto from "../common/atoms/SquarePhoto";
-import Card from "../common/atoms/Card";
 
 const MainBestReviewItem = ({
   className = "",
@@ -7,11 +6,11 @@ const MainBestReviewItem = ({
   alt,
   plannerName,
   coupleName,
-  content,
-  reviewId,
+  content1,
+  content2,
 }) => {
   return (
-    <Card to={`/portfolios/reviews/${reviewId}`} className="best-review-card">
+    <div className="best-review-card">
       <div
         className={`flex py-[10px] mx-[10px] items-center gap-[10px] ${className}`}
       >
@@ -22,13 +21,18 @@ const MainBestReviewItem = ({
         />
         <div className="flex flex-col gap-[10px] flex-1 text-sm">
           <span className="text-blue-sunsu">{plannerName} 플래너</span>
-          <span className="line-clamp-6 sm:line-clamp-5 xs:line-clamp-4">
-            {content}
-          </span>
+          <div>
+            <span className="line-clamp-6 sm:line-clamp-5 xs:line-clamp-4 whitespace-pre-line">
+              {content1}
+            </span>
+            <span className="line-clamp-6 sm:line-clamp-5 xs:line-clamp-4 whitespace-pre-line">
+              {content2}
+            </span>
+          </div>
           <span className="text-gray-sunsu text-xs">{coupleName}님의 리뷰</span>
         </div>
       </div>
-    </Card>
+    </div>
   );
 };
 

@@ -1,44 +1,19 @@
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
 import Photo from "../common/atoms/Photo";
 import { ReactComponent as Congratulations } from "../../assets/congratulations-01.svg";
 
 const MainPhoto = ({
   className = "",
-  to = "",
   src,
   alt,
   plannerName = "",
   brideName = "",
   brideInstagram = "",
 }) => {
-  const navigate = useNavigate();
-  const [moved, setMoved] = useState(false);
-
-  const downListener = () => {
-    setMoved(false);
-  };
-
-  const moveListener = () => {
-    setMoved(true);
-  };
-
-  const upListener = () => {
-    if (!moved) {
-      navigate(to);
-    }
-  };
-
   return (
     <div
       className={`photo-wrapper relative xs:h-[600px] sm:h-[700px] h-[800px] ${className}`}
     >
-      <div
-        onMouseUp={() => upListener()}
-        onMouseMove={moveListener}
-        onMouseDown={downListener}
-        role="presentation"
-      >
+      <div role="presentation">
         <Photo
           src={src}
           alt={alt}

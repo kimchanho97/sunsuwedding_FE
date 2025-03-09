@@ -31,6 +31,7 @@ const MainCarousel = () => {
     dotsClass: "custom-dots",
     arrows: false,
     lazyLoad: "anticipated",
+    accessibility: false,
   };
 
   return (

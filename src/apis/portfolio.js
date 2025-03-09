@@ -8,7 +8,7 @@ export const getPortfolioList = async (
   maxPrice,
 ) => {
   const response = await instance.get(
-    `/api/portfolio?cursor=${nextCursor}&name=${name}&location=${location}&minPrice=${minPrice}&maxPrice=${maxPrice}`,
+    `/api/portfolio/v1?page=${nextCursor}&name=${name}&location=${location}&minPrice=${minPrice}&maxPrice=${maxPrice}`,
   );
   return response.data.response;
 };

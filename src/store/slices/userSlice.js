@@ -3,7 +3,6 @@ import { getUserInfo } from "../../apis/user";
 
 const initialState = {
   isLogged: false,
-  avatar: "",
   userInfo: {},
   loading: false,
   error: null,
@@ -34,9 +33,6 @@ const userSlice = createSlice({
       state.userInfo = {};
       window.location.href = "/";
     },
-    updateAvatar: (state, action) => {
-      state.avatar = action.payload;
-    },
   },
   extraReducers: (builder) => {
     builder
@@ -49,18 +45,6 @@ const userSlice = createSlice({
         state.userInfo = { ...state.userInfo, ...action.payload };
       })
       .addCase(fetchUserInfo.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload.error;
-      })
-      // fetchAvatar
-      .addCase(fetchAvatar.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(fetchAvatar.fulfilled, (state, action) => {
-        state.loading = false;
-        state.avatar = action.payload;
-      })
-      .addCase(fetchAvatar.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload.error;
       });

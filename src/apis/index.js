@@ -1,25 +1,17 @@
 import axios from "axios";
-import { getReactAppApiUrl } from "../utils/convert";
 
 export const instance = axios.create({
   baseURL: process.env.REACT_APP_API_URL,
   timeout: 5000,
+  withCredentials: true, // 쿠키 전달
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-instance.interceptors.request.use((config) => {
-  const accessToken = localStorage.getItem("accessToken");
-  if (accessToken) {
-    config.headers.Authorization = accessToken;
-  }
-  return config;
-});
-
 instance.interceptors.response.use(
   (response) => {
-    return response;
+    return response.data;
   },
   async (error) => {
     if (error.code === "ECONNABORTED") {
@@ -28,41 +20,15 @@ instance.interceptors.response.use(
       );
       window.location.href = "/";
     }
-    const { config, response: { status } = {} } = error;
-    if (status === 401) {
-      // 액세스 토큰 만료
-      if (error?.response?.data?.error?.status === 2100) {
-        const originalRequest = config;
-        const accessToken = localStorage.getItem("accessToken");
-        const refreshToken = localStorage.getItem("refreshToken");
-        // refresh token으로 access token 재발급
-        const res = await instance.post(
-          `${getReactAppApiUrl()}/api/user/token`, // token refresh api
-          {},
-          { headers: { Authorization: accessToken, Refresh: refreshToken } },
-        );
-        // 재발급 받은 토큰 local storage에 저장
-        const newAccessToken = res.headers.authorization;
-        const newRefreshToken = res.headers.refresh;
-        localStorage.setItem("accessToken", newAccessToken);
-        localStorage.setItem("refreshToken", newRefreshToken);
-        originalRequest.headers.authorization = newAccessToken;
-        // 401로 요청 실패했던 요청 새로운 accessToken으로 재요청
-        return axios(originalRequest);
-      }
-      // 리프레시 토큰 만료
-      if (error?.response?.data?.error?.status === 2102) {
-        // refresh token이 만료된 경우
-        localStorage.clear();
-        alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
-        window.location.href = "/login";
-      }
-      if (error?.response?.data?.error?.status > 2102) {
-        localStorage.clear();
-        alert("로그인 정보가 유효하지 않습니다. 다시 로그인해주세요.");
-        window.location.href = "/login";
-      }
+
+    const { response } = error;
+    if (response) {
+      const { status, data } = response;
+      // 백엔드에서 받은 code, message + HTTP status도 포함
+      // eslint-disable-next-line prefer-promise-reject-errors
+      return Promise.reject({ status, ...data });
     }
+    // API 서버와 통신이 불가능할 때
     return Promise.reject(error);
   },
 );

@@ -1,7 +1,5 @@
 import CircularProgress from "@mui/material/CircularProgress";
-import { getDatabase, ref, set } from "firebase/database";
 import React, { useEffect, useRef, useState } from "react";
-import { sendAuthCode, verifyAuthCode } from "../../apis/email";
 import { signup } from "../../apis/user";
 import BackButtonHeader from "../../components/common/BackButtonHeader";
 import CloseButtonPage from "../../components/common/CloseButtonPage";
@@ -14,20 +12,16 @@ import Box from "../../components/common/atoms/Box";
 import Button from "../../components/common/atoms/Button";
 import Container from "../../components/common/atoms/Container";
 import Label from "../../components/common/atoms/Label";
-import Timer from "../../components/common/atoms/Timer";
 import "../../firebase";
 import useDefaultErrorHander from "../../hooks/useDefaultErrorHandler";
 import useInput from "../../hooks/useInput";
-import useOpenBottomSheet from "../../hooks/useOpenBottomSheet";
 import { validateEmail, validatePassword } from "../../utils";
-import { defaultAvatarUrl } from "../../utils/constants";
 
 const USER_TYPE = {
   COUPLE: 1,
   PLANNER: 2,
 };
 
-// 테스트 완료(찬호)
 export default function SignupPage() {
   const [errorMessage, setErrorMessage] = useState("");
   const [activeButton, setActiveButton] = useState(USER_TYPE.COUPLE);
@@ -42,127 +36,19 @@ export default function SignupPage() {
   const passwordInputRef = useRef(null);
   const password2InputRef = useRef(null);
   const agreePolicyRef = useRef(null);
-  const codeRef = useRef(null);
-  const [isSendingCode, setIsSendingCode] = useState(false);
-  const [isValidatingCode, setIsValidatingCode] = useState(false);
-  const [isSentCode, setIsSentCode] = useState(false);
-  const [isPassAuthCode, setIsPassAuthCode] = useState(false);
-  const [time, setTime] = useState(60 * 10);
   const { defaultErrorHandler } = useDefaultErrorHander();
-  const { openBottomSheetHandler } = useOpenBottomSheet();
   const { values, handleChange, setValues } = useInput({
     role: "couple",
     email: "",
     password: "",
     password2: "",
     username: "",
-    code: "",
   });
 
   // eslint-disable-next-line no-shadow
   const setErrorMessageAndFocus = (message, ref) => {
     setErrorMessage(message);
     ref.current.focus();
-  };
-
-  const handleSendCode = async () => {
-    if (errorMessage !== "") {
-      setErrorMessage("");
-      await new Promise((resolve) => {
-        setTimeout(() => {
-          resolve();
-        }, 300);
-      });
-    }
-    if (!values.email) {
-      setErrorMessageAndFocus("이메일을 입력해주세요.", emailInputRef);
-      return;
-    }
-    if (!validateEmail(values.email)) {
-      setErrorMessageAndFocus("이메일 형식으로 입력해주세요.", emailInputRef);
-      return;
-    }
-    setIsSendingCode(true);
-    try {
-      await sendAuthCode({ email: values.email });
-      if (isSentCode) {
-        setTime(60 * 10);
-      }
-      setIsSentCode(true);
-    } catch (error) {
-      // 이메일 중복 에러 검증
-      const customError = error?.response?.data?.error;
-      switch (customError.status) {
-        case 2002:
-          setErrorMessageAndFocus("동일한 이메일이 존재합니다.", emailInputRef);
-          break;
-        case 2206:
-          setErrorMessageAndFocus("이미 인증이 완료되었습니다.", emailInputRef);
-          break;
-        default:
-          openBottomSheetHandler({
-            bottomSheet: "messageBottomSheet",
-            message: "인증코드 생성 과정에서 오류가 발생했습니다.",
-          });
-      }
-    } finally {
-      setIsSendingCode(false);
-    }
-  };
-
-  const handleValidateCode = async () => {
-    if (errorMessage !== "") {
-      setErrorMessage("");
-      await new Promise((resolve) => {
-        setTimeout(() => {
-          resolve();
-        }, 300);
-      });
-    }
-    if (!isSentCode) {
-      setErrorMessageAndFocus("인증코드를 전송해주세요.", emailInputRef);
-      return;
-    }
-    if (!values.code) {
-      setErrorMessageAndFocus("인증코드를 입력해주세요.", codeRef);
-      return;
-    }
-    setIsValidatingCode(true);
-    try {
-      await verifyAuthCode({ email: values.email, code: values.code });
-      setIsPassAuthCode(true);
-    } catch (error) {
-      const customError = error?.response?.data?.error;
-      switch (customError.status) {
-        case 2202:
-          setErrorMessageAndFocus(
-            "인증코드 전송 내역이 없습니다. 인증코드를 요청 후 진행해주세요.",
-            codeRef,
-          );
-          break;
-        case 2203:
-          setErrorMessageAndFocus(
-            "인증코드가 만료되었습니다. 다시 요청해주세요.",
-            codeRef,
-          );
-          break;
-        case 2204:
-          setErrorMessageAndFocus("인증코드가 일치하지 않습니다.", codeRef);
-          break;
-        case 2206:
-          setErrorMessageAndFocus("이미 인증이 완료되었습니다.", codeRef);
-          break;
-        case 400:
-          setErrorMessageAndFocus("인증코드는 6글자입니다.", codeRef);
-          break;
-        default:
-          openBottomSheetHandler({
-            bottomSheet: "serverErrorBottomSheet",
-          });
-      }
-    } finally {
-      setIsValidatingCode(false);
-    }
   };
 
   const setUserRole = (roleNumber) => {
@@ -198,10 +84,6 @@ export default function SignupPage() {
     }
     if (!validateEmail(values.email)) {
       setErrorMessageAndFocus("이메일 형식으로 입력해주세요.", emailInputRef);
-      return false;
-    }
-    if (!isPassAuthCode) {
-      setErrorMessageAndFocus("이메일 인증을 완료해주세요.", codeRef);
       return false;
     }
     if (!values.password) {
@@ -240,24 +122,17 @@ export default function SignupPage() {
     if (!(await validateInput())) return;
     try {
       setIsSubmitting(true);
-      const res = await signup({
+      await signup({
         role: values.role,
         email: values.email,
         password: values.password,
         password2: values.password2,
         username: values.username,
       });
-      if (res.success) {
-        await set(ref(getDatabase(), `users/${res.response.userId}`), {
-          name: values.username,
-          avatar: defaultAvatarUrl,
-        });
-        setIsCompletionSheetOpen(true);
-      }
+      setIsCompletionSheetOpen(true);
     } catch (error) {
-      const customError = error?.response?.data?.error;
-      if (customError) {
-        setErrorMessage(error?.response?.data?.error?.message);
+      if (error.code) {
+        setErrorMessage(error.message); // 클라이언트 오류 메시지를 보여줌
         return;
       }
       defaultErrorHandler(error);
@@ -363,43 +238,6 @@ export default function SignupPage() {
               onChange={handleChange}
               className="relative pt-[15px] w-full"
             />
-            <button
-              type="button"
-              className="absolute right-[6px] h-[38px] bottom-[6px] w-[100px] border rounded-[10px] bg-blue-sunsu text-white text-xs"
-              onClick={handleSendCode}
-              disabled={isSendingCode}
-            >
-              {isSentCode ? "재전송" : "인증코드 전송"}
-            </button>
-          </div>
-          <div className="relative">
-            <InputGroup
-              ref={codeRef}
-              id="code"
-              type="code"
-              name="code"
-              label="인증코드"
-              placeholder="인증코드는 999999입니다."
-              value={values.code}
-              onChange={handleChange}
-              disabled={isValidatingCode}
-              className="relative pt-[15px] w-full"
-            />
-            <div className="absolute right-[6px] bottom-[6px] flex gap-[6px] items-center">
-              {isSentCode &&
-                (isPassAuthCode ? (
-                  <span className=" text-green-700 font-bold">인증완료</span>
-                ) : (
-                  <Timer time={time} setTime={setTime} />
-                ))}
-              <button
-                type="button"
-                onClick={handleValidateCode}
-                className=" h-[38px] w-[50px] border rounded-[10px] bg-blue-sunsu text-white text-xs"
-              >
-                확인
-              </button>
-            </div>
           </div>
           <InputGroup
             ref={passwordInputRef}

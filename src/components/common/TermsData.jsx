@@ -5,9 +5,8 @@ const TermsData = () => {
       <br />
       제1조 (목적)
       <br />
-      1. 이 약관은 순수웨딩(이하 &apos;회사&apos;)이 제공하는
-      https://sunsu.user-app.krampoline.com(이하 &apos;서비스&apos;)의 이용조건
-      및 절차에 관한 사항을 규정함을 목적으로 합니다.
+      1. 이 약관은 순수웨딩(이하 &apos;회사&apos;)이 제공하는 이용조건 및 절차에
+      관한 사항을 규정함을 목적으로 합니다.
       <br />
       제2조 (정의)
       <br />

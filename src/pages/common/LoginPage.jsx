@@ -11,15 +11,10 @@ import Box from "../../components/common/atoms/Box";
 import Button from "../../components/common/atoms/Button";
 import Container from "../../components/common/atoms/Container";
 import useInput from "../../hooks/useInput";
-import {
-  fetchAvatar,
-  fetchUserInfo,
-  logIn,
-} from "../../store/slices/userSlice";
+import { fetchUserInfo, logIn } from "../../store/slices/userSlice";
 import { validateEmail, validatePassword } from "../../utils";
 import useDefaultErrorHandler from "../../hooks/useDefaultErrorHandler";
 
-// 테스트 완료
 export default function LoginPage() {
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState("");
@@ -32,8 +27,6 @@ export default function LoginPage() {
   const passwordInputRef = useRef(null);
   const dispatch = useDispatch();
   const { defaultErrorHandler } = useDefaultErrorHandler();
-
-  // eslint-disable-next-line no-shadow
   const setErrorMessageAndFocus = (message, ref) => {
     setErrorMessage(message);
     ref.current.focus();
@@ -65,7 +58,6 @@ export default function LoginPage() {
         password: values.password,
       });
       if (res.success) {
-        dispatch(fetchAvatar(res.response.userId));
         dispatch(logIn());
         dispatch(fetchUserInfo());
         navigate("/");
