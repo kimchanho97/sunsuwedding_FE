@@ -1,17 +1,7 @@
-import CircularProgress from "@mui/material/CircularProgress";
-import {
-  child,
-  getDatabase,
-  ref,
-  serverTimestamp,
-  set,
-} from "firebase/database";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
-import { createChatRoom } from "../../apis/chat";
+import { Link } from "react-router-dom";
 import { ReactComponent as StarIcon } from "../../assets/star-02.svg";
-import useDefaultErrorHandler from "../../hooks/useDefaultErrorHandler";
 import useOpenBottomSheet from "../../hooks/useOpenBottomSheet";
 import Button from "../common/atoms/Button";
 import DivideBar from "../common/atoms/DivideBar";
@@ -20,17 +10,15 @@ import DescriptionRow from "./DescriptionRow";
 import FavoriteButton from "./FavoriteButton";
 import HistoryBottomSheet from "./HistoryBottomSheet";
 import MembershipPaySection from "./MembershipPaySection";
-import PaymentsHistorySection from "./PaymentsHistorySection";
 import PlannerInfoRow from "./PlannerInfoRow";
 import PortfolioCarousel from "./PortfolioCarousel";
+import ChatConfirmBottomSheet from "./ChatConfirmBottomSheet";
 
 const PortfolioDetailTemplate = ({ portfolio }) => {
   const { isLogged, userInfo } = useSelector((state) => state.user);
   const [paymentBottomSheetOpen, setPaymentBottomSheetOpen] = useState(false);
   const [historyBottomSheetOpen, setHistoryBottomSheetOpen] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const navigate = useNavigate();
-  const { defaultErrorHandler } = useDefaultErrorHandler();
+  const [chatConfirmOpen, setChatConfirmOpen] = useState(false);
   const { openBottomSheetHandler } = useOpenBottomSheet();
 
   const handleOpenPaymentBottomSheet = () => {
@@ -41,44 +29,6 @@ const PortfolioDetailTemplate = ({ portfolio }) => {
     setPaymentBottomSheetOpen(true);
   };
 
-  const handleOnCreateChatRoom = async () => {
-    if (!isLogged) {
-      openBottomSheetHandler({ bottomSheet: "loginBottomSheet" });
-      return;
-    }
-    setIsSubmitting(true);
-    try {
-      const {
-        response: { chatId, existed },
-      } = await createChatRoom(portfolio.userId);
-      if (existed) {
-        navigate(`/chat/${chatId}`);
-        return;
-      }
-      // 채팅방이 없을 경우 새로 만들어준다.
-      const db = getDatabase();
-      const userRef = ref(db, `users/${userInfo.userId}`);
-      const counterUserRef = ref(db, `users/${portfolio.userId}`);
-      await set(child(userRef, `chatRooms/${chatId}`), {
-        chatId,
-        counterId: portfolio.userId,
-        counterName: portfolio.plannerName,
-        lastVisited: serverTimestamp(),
-      });
-      await set(child(counterUserRef, `chatRooms/${chatId}`), {
-        chatId,
-        counterId: userInfo.userId,
-        counterName: userInfo.username,
-        lastVisited: serverTimestamp(),
-      });
-      navigate(`/chat/${chatId}`);
-    } catch (error) {
-      defaultErrorHandler(error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
   return (
     <div className="w-full h-full relative">
       {paymentBottomSheetOpen && (
@@ -87,30 +37,38 @@ const PortfolioDetailTemplate = ({ portfolio }) => {
       {historyBottomSheetOpen && (
         <HistoryBottomSheet onClose={() => setHistoryBottomSheetOpen(false)} />
       )}
+      {chatConfirmOpen && (
+        <ChatConfirmBottomSheet
+          plannerName={portfolio.plannerName}
+          plannerId={portfolio.plannerId}
+          onClose={() => setChatConfirmOpen(false)}
+        />
+      )}
       <div>
         <PortfolioCarousel portfolio={portfolio} />
       </div>
       {/* 플래너 정보 */}
       <PlannerInfoRow
         plannerName={portfolio.plannerName}
-        contractCount={portfolio.contractCount}
+        contractCount={portfolio.contractedCount}
         location={portfolio.location}
         title={portfolio.title}
-        priceInfo={portfolio.priceInfo}
+        totalPrice={portfolio.totalPrice}
+        items={portfolio.items}
       />
       {/* 찜하기 & 리뷰 */}
       <div className=" flex w-full border-t items-center">
         <div className="h-[50px] w-1/2 border-r flex justify-center">
-          <FavoriteButton isLiked={portfolio.isLiked} />
+          <FavoriteButton isFavorited={portfolio.isFavorited} />
         </div>
         <div className="h-[50px] w-1/2 flex items-center justify-center">
-          <Link to={`/portfolios/reviews/${portfolio.userId}`}>
+          <Link to={`/portfolios/reviews/${portfolio.plannerId}`}>
             <div className="flex gap-[10px] items-center">
               <span className="font-bold">리뷰</span>
               <div className="flex gap-1 items-center">
                 <StarIcon className="w-[16px] h-[16px] object-cover mb-[1px]" />
                 <div className="text-base align-middle font-bold">
-                  {portfolio.avgStars.toFixed(1)}
+                  {portfolio.averageRating.toFixed(1)}
                 </div>
               </div>
             </div>
@@ -132,10 +90,11 @@ const PortfolioDetailTemplate = ({ portfolio }) => {
         <div className="text-base font-bold">이전 매칭 내역</div>
         <div className="pt-5">
           {userInfo.grade === "premium" ? (
-            <PaymentsHistorySection
-              portfolio={portfolio}
-              setHistoryBottomSheetOpen={setHistoryBottomSheetOpen}
-            />
+            // <PaymentsHistorySection
+            //   portfolio={portfolio}
+            //   setHistoryBottomSheetOpen={setHistoryBottomSheetOpen}
+            // />
+            <div />
           ) : (
             <MembershipPaySection
               handleOpenPaymentBottomSheet={handleOpenPaymentBottomSheet}
@@ -146,14 +105,9 @@ const PortfolioDetailTemplate = ({ portfolio }) => {
       {!(userInfo.role === "planner") && (
         <Button
           className="w-full h-[50px] mt-3 flex items-center justify-center bg-lightskyblue-sunsu text-sm"
-          onClick={handleOnCreateChatRoom}
-          disabled={isSubmitting}
+          onClick={() => setChatConfirmOpen(true)} // ✅ 바텀시트 오픈
         >
-          {isSubmitting ? (
-            <CircularProgress size={20} />
-          ) : (
-            <span>채팅 상담 받기</span>
-          )}
+          <span>채팅 상담 받기</span>
         </Button>
       )}
     </div>

@@ -6,7 +6,8 @@ export default function PlannerInfoRow({
   contractCount,
   location,
   title,
-  priceInfo,
+  totalPrice,
+  items,
 }) {
   return (
     <div className="p-5 justify-between">
@@ -21,7 +22,7 @@ export default function PlannerInfoRow({
       </div>
       <div className="pt-[5px] text-xs text-gray-sunsu">{title}</div>
       <div className="pt-5">
-        <PriceInfoRow priceInfo={priceInfo} />
+        <PriceInfoRow totalPrice={totalPrice} items={items} />
       </div>
     </div>
   );

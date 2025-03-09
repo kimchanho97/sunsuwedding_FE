@@ -21,6 +21,7 @@ import DuplicatedCheckLayout from "./layouts/DuplicatedCheckLayout";
 import QuotationCollectPage from "./pages/quotation/QuotationCollectPage";
 import WritableReviewListPage from "./pages/review/WritableReviewListPage";
 import ReviewListPage from "./pages/review/ReviewListPage";
+import PortfolioReviewPage from "./pages/review/PortfolioReviewPage";
 
 function App() {
   // 주석
@@ -36,10 +37,10 @@ function App() {
             <Route path="*" element={<NotFoundPage />} />
             <Route path="/terms" element={<TermsPage />} />
             <Route path="/policy" element={<PrivacyPolicyPage />} />
-            {/* <Route */}
-            {/*  path="/portfolios/reviews/:plannerId" */}
-            {/*  element={<PortfolioReviewPage />} */}
-            {/* /> */}
+            <Route
+              path="/portfolios/reviews/:plannerId"
+              element={<PortfolioReviewPage />}
+            />
             {/* <Route path="/reviews/:reviewId" element={<ReviewDetailPage />} /> */}
           </Route>
           <Route element={<DuplicatedCheckLayout />}>

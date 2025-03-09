@@ -43,7 +43,8 @@ export const getPortfolioListCursor = async (
 };
 
 export const getPortfolioDetail = async (portfolioId) => {
-  return instance.get(`/api/portfolio/${portfolioId}`);
+  const response = await instance.get(`/api/portfolio/${portfolioId}`);
+  return response.data;
 };
 
 export const createPortfolio = async (portfolioData) => {

@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import Slider from "react-slick";
 import SquarePhoto from "../common/atoms/SquarePhoto";
 import "slick-carousel/slick/slick.css";
@@ -5,14 +6,19 @@ import "slick-carousel/slick/slick-theme.css";
 import "./PortfolioCarousel.css";
 
 const PortfolioCarousel = ({ portfolio }) => {
+  const sliderRef = useRef(null);
+
   const settings = {
     dots: true,
     infinite: true,
     speed: 500,
     autoplay: true,
-    autoplaySpeed: 5000,
+    autoplaySpeed: 3000,
     slidesToShow: 1,
     slidesToScroll: 1,
+    arrows: false,
+    lazyLoad: "progressive",
+    pauseOnHover: false, // ✅ hover시 멈추지 않도록 설정
     // eslint-disable-next-line react/no-unstable-nested-components
     appendDots: (dots) => (
       <div
@@ -29,9 +35,14 @@ const PortfolioCarousel = ({ portfolio }) => {
       </div>
     ),
     dotsClass: "custom-dots",
-    arrows: false,
-    lazyLoad: "anticipated",
   };
+
+  // ✅ 컴포넌트가 마운트된 후 autoplay 강제 트리거
+  useEffect(() => {
+    if (sliderRef.current) {
+      sliderRef.current.slickGoTo(0);
+    }
+  }, []);
 
   return (
     <>

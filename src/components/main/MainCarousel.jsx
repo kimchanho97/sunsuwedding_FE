@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import Slider from "react-slick";
 import MainPhoto from "./MainPhoto";
 import "slick-carousel/slick/slick.css";
@@ -5,21 +6,26 @@ import "slick-carousel/slick/slick-theme.css";
 import "./MainCarousel.css";
 
 const MainCarousel = () => {
+  const sliderRef = useRef(null);
+
   const settings = {
     dots: true,
     infinite: true,
     speed: 500,
     autoplay: true,
-    autoplaySpeed: 5000,
+    autoplaySpeed: 3000,
     slidesToShow: 1,
     slidesToScroll: 1,
+    arrows: false,
+    lazyLoad: "progressive",
+    pauseOnHover: false, // ✅ hover시 멈추지 않도록 설정
     // eslint-disable-next-line react/no-unstable-nested-components
     appendDots: (dots) => (
       <div
         style={{
           width: "100%",
           position: "absolute",
-          bottom: "8px",
+          bottom: "4px",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -29,10 +35,14 @@ const MainCarousel = () => {
       </div>
     ),
     dotsClass: "custom-dots",
-    arrows: false,
-    lazyLoad: "anticipated",
-    accessibility: false,
   };
+
+  // ✅ 컴포넌트가 마운트된 후 autoplay 강제 트리거
+  useEffect(() => {
+    if (sliderRef.current) {
+      sliderRef.current.slickGoTo(0);
+    }
+  }, []);
 
   return (
     <>
