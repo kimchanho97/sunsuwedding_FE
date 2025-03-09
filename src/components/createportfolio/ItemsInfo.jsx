@@ -15,7 +15,7 @@ const ItemsInfo = forwardRef(({ items, setItems }, ref) => {
 
       return;
     }
-    setItems([...items, { itemTitle: "", itemPrice: "0" }]);
+    setItems([...items, { itemName: "", itemPrice: "0" }]);
   };
 
   const handleOnRemoveItem = () => {
@@ -51,8 +51,8 @@ const ItemsInfo = forwardRef(({ items, setItems }, ref) => {
             type="text"
             placeholder="항목"
             className="w-full focus:outline-none"
-            name={`itemTitle-${index}`}
-            value={item?.itemTitle}
+            name={`itemName-${index}`}
+            value={item?.itemName}
             onChange={handleInputChange}
           />
           <span className=" text-lightgray-sunsu">|</span>
