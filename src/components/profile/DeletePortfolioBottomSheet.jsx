@@ -3,12 +3,14 @@ import { deletePortfolio } from "../../apis/portfolio";
 import useOpenBottomSheet from "../../hooks/useOpenBottomSheet";
 import Button from "../common/atoms/Button";
 import BottomSheet from "../common/bottomsheet/BottomSheet";
+import useDefaultErrorHandler from "../../hooks/useDefaultErrorHandler";
 
 // done test
 export default function DeletePortfolioBottomSheet({ onClose }) {
   const [agreePolicy, setAgreePolicy] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { openBottomSheetHandler } = useOpenBottomSheet();
+  const { defaultErrorHandler } = useDefaultErrorHandler();
 
   const handleAgreement = () => {
     setAgreePolicy(!agreePolicy);
@@ -18,23 +20,18 @@ export default function DeletePortfolioBottomSheet({ onClose }) {
     if (!agreePolicy) return;
     setIsSubmitting(true);
     try {
-      const response = await deletePortfolio();
-      if (response.success) {
-        onClose();
-      }
+      await deletePortfolio();
+      onClose();
     } catch (error) {
-      const customError = error?.response?.data?.error;
-      if (customError?.status === 4000) {
+      if (error?.code === 4002) {
         onClose();
         openBottomSheetHandler({
           bottomSheet: "messageBottomSheet",
-          message: "삭제할 포트폴리오가 존재하지 않습니다.",
+          message: error.message,
         });
+        return;
       }
-      if (error?.response.status === 500) {
-        onClose();
-        openBottomSheetHandler({ bottomSheet: "serverErrorBottomSheet" });
-      }
+      defaultErrorHandler(error);
     }
     setIsSubmitting(false);
   };
