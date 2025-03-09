@@ -11,7 +11,6 @@ import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { createChatRoom } from "../../apis/chat";
 import { ReactComponent as StarIcon } from "../../assets/star-02.svg";
-import "../../firebase";
 import useDefaultErrorHandler from "../../hooks/useDefaultErrorHandler";
 import useOpenBottomSheet from "../../hooks/useOpenBottomSheet";
 import Button from "../common/atoms/Button";

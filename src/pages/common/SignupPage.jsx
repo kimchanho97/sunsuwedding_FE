@@ -12,7 +12,6 @@ import Box from "../../components/common/atoms/Box";
 import Button from "../../components/common/atoms/Button";
 import Container from "../../components/common/atoms/Container";
 import Label from "../../components/common/atoms/Label";
-import "../../firebase";
 import useDefaultErrorHander from "../../hooks/useDefaultErrorHandler";
 import useInput from "../../hooks/useInput";
 import { validateEmail, validatePassword } from "../../utils";

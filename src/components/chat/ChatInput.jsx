@@ -5,17 +5,9 @@ import {
   LinearProgress,
   TextField,
 } from "@mui/material";
-import {
-  getDatabase,
-  push,
-  ref,
-  serverTimestamp,
-  set,
-} from "firebase/database";
 import React, { useCallback, useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import "../../firebase";
 import ImageModal from "../common/modal/ImageModal";
 import { ReactComponent as SendIcon } from "../../assets/send-01.svg";
 import { ReactComponent as GalleryIcon } from "../../assets/gallery-01.svg";
@@ -42,7 +34,6 @@ function ChatInput() {
 
   const createMessage = useCallback(() => {
     return {
-      timestamp: serverTimestamp(),
       user: {
         userId: userInfo.userId,
         name: userInfo.username,
@@ -56,10 +47,6 @@ function ChatInput() {
     if (!message) return;
     setLoading(true);
     try {
-      await set(
-        push(ref(getDatabase(), `messages/${chatId}`)), // push시 자동으로 key값 생성(매개변수로 key값을 가짐)
-        createMessage(),
-      );
       setLoading(false);
       setMessage("");
     } catch (error) {

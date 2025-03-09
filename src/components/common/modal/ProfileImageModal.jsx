@@ -8,7 +8,6 @@ import {
 } from "@mui/material";
 import React, { useCallback, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import "../../../firebase";
 import { deleteProfileImage, updateProfileImage } from "../../../apis/user";
 import { setUserInfo } from "../../../store/slices/userSlice";
 
