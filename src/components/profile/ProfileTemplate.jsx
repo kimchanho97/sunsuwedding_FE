@@ -9,6 +9,7 @@ import MembershipBottomSheet from "./MembershipBottomSheet";
 import ProfileImage from "./ProfileImage";
 import ReviewSection from "./ReviewSection";
 import PortfolioSection from "./PortfolioSection";
+import { logout } from "../../apis/user";
 
 export default function ProfileTemplate() {
   const { userInfo } = useSelector((state) => state.user);
@@ -21,8 +22,14 @@ export default function ProfileTemplate() {
     useState(false);
   const dispatch = useDispatch();
 
-  const handleLogout = () => {
-    dispatch(logOut());
+  const handleLogout = async () => {
+    try {
+      await logout(); // 서버에 로그아웃 요청 보내기
+    } catch (error) {
+      console.error("로그아웃 실패:", error.message); // 서버 응답 실패 시 로그 출력
+    } finally {
+      dispatch(logOut()); // 클라이언트 상태 초기화 (세션 만료 시에도 실행)
+    }
   };
 
   const handleOnShowPaymentBottomSheet = () => {

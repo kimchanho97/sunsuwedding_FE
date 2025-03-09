@@ -33,7 +33,10 @@ const userSlice = createSlice({
       window.location.href = "/";
     },
     setUserInfo: (state, action) => {
-      state.userInfo = action.payload; // 로그인 응답으로 받은 유저 정보 저장
+      state.userInfo = {
+        ...state.userInfo,
+        ...action.payload,
+      }; // 로그인 응답으로 받은 유저 정보 저장
     },
   },
   extraReducers: (builder) => {

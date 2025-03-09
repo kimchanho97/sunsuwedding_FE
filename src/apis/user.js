@@ -16,6 +16,23 @@ export const login = async (loginData) => {
   return instance.post("/api/auth/login", { email, password });
 };
 
+export const logout = async () => {
+  return instance.post("/api/auth/logout");
+};
+
+export const updateProfileImage = async (file) => {
+  const formData = new FormData();
+  formData.append("profileImage", file);
+
+  return instance.post("/api/user/profile-image", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+};
+
+export const deleteProfileImage = async () => {
+  return instance.delete("/api/user/profile-image");
+};
+
 export const deleteAccount = async () => {
   const response = await instance.delete("/api/user");
   return response.data;
