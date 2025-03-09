@@ -11,7 +11,7 @@ import Box from "../../components/common/atoms/Box";
 import Button from "../../components/common/atoms/Button";
 import Container from "../../components/common/atoms/Container";
 import useInput from "../../hooks/useInput";
-import { fetchUserInfo, logIn } from "../../store/slices/userSlice";
+import { logIn, setUserInfo } from "../../store/slices/userSlice";
 import { validateEmail, validatePassword } from "../../utils";
 import useDefaultErrorHandler from "../../hooks/useDefaultErrorHandler";
 
@@ -57,22 +57,17 @@ export default function LoginPage() {
         email: values.email,
         password: values.password,
       });
-      if (res.success) {
-        dispatch(logIn());
-        dispatch(fetchUserInfo());
-        navigate("/");
-      }
+
+      dispatch(logIn());
+      dispatch(setUserInfo(res.data)); // 로그인 응답을 Redux store에 저장
+      navigate("/");
     } catch (error) {
-      const customError = error?.response?.data?.error;
-      switch (customError.status) {
-        case 2003:
-          setErrorMessageAndFocus("이메일을 찾을 수 없습니다.", emailInputRef);
+      switch (error.code) {
+        case 2001:
+          setErrorMessageAndFocus(error.message, emailInputRef);
           break;
-        case 2005:
-          setErrorMessageAndFocus(
-            "패스워드를 잘못 입력하셨습니다.",
-            passwordInputRef,
-          );
+        case 2002:
+          setErrorMessageAndFocus(error.message, passwordInputRef);
           break;
         default:
           defaultErrorHandler(error);

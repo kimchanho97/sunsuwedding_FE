@@ -28,10 +28,12 @@ const userSlice = createSlice({
       state.isLogged = true;
     },
     logOut: (state) => {
-      localStorage.clear();
       state.isLogged = false;
       state.userInfo = {};
       window.location.href = "/";
+    },
+    setUserInfo: (state, action) => {
+      state.userInfo = action.payload; // 로그인 응답으로 받은 유저 정보 저장
     },
   },
   extraReducers: (builder) => {
@@ -51,5 +53,5 @@ const userSlice = createSlice({
   },
 });
 
-export const { logIn, logOut, updateAvatar } = userSlice.actions;
+export const { logIn, logOut, setUserInfo } = userSlice.actions;
 export default userSlice.reducer;

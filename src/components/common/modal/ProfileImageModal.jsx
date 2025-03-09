@@ -15,16 +15,15 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import React, { useCallback, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { v4 as uuidv4 } from "uuid";
 import "../../../firebase";
-import { updateAvatar } from "../../../store/slices/userSlice";
 import { defaultAvatarUrl } from "../../../utils/constants";
 
 function ProfileImageModal({ open, handleClose, setUploading }) {
   const { userInfo, avatar } = useSelector((state) => state.user);
   const [file, setFile] = useState(null);
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const onChangeAddFile = useCallback((e) => {
     const addedFile = e.target.files[0];
     if (addedFile) setFile(addedFile);
@@ -57,7 +56,7 @@ function ProfileImageModal({ open, handleClose, setUploading }) {
             ref(getDatabase(), `users/${userInfo.userId}/avatar`),
             downloadUrl,
           );
-          dispatch(updateAvatar(downloadUrl));
+          // dispatch(updateAvatar(downloadUrl));
           setUploading(false);
           unsubscribe();
         } catch (error) {
@@ -98,7 +97,7 @@ function ProfileImageModal({ open, handleClose, setUploading }) {
       const decodedFileName = decodeURIComponent(encodedFileName);
       console.log(decodedFileName);
       await deleteObject(refStorage(getStorage(), decodedFileName));
-      dispatch(updateAvatar(defaultAvatarUrl));
+      // dispatch(updateAvatar(defaultAvatarUrl));
     } catch (error) {
       console.error(error);
     }
