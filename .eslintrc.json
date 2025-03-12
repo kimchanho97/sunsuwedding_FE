@@ -27,8 +27,6 @@
       {
         "endOfLine": "auto"
       }
-    ],
-    "no-console": "warn",  // 🚀 기존 "error" 대신 "warn"으로 변경
-    "no-alert": "warn"     // 🚀 기존 "error" 대신 "warn"으로 변경
+    ]
   }
 }
