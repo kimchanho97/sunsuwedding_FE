@@ -1,20 +1,18 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import CircularProgress from "@mui/material/CircularProgress";
 import BottomSheet from "../common/bottomsheet/BottomSheet";
-import { createChatRoom } from "../../apis/chat";
 import useOpenBottomSheet from "../../hooks/useOpenBottomSheet";
 import useDefaultErrorHandler from "../../hooks/useDefaultErrorHandler";
 
 export default function ChatConfirmBottomSheet({
   plannerName,
-  plannerId,
+  // plannerId,
   onClose,
 }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { isLogged } = useSelector((state) => state.user);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const { defaultErrorHandler } = useDefaultErrorHandler();
   const { openBottomSheetHandler } = useOpenBottomSheet();
 
@@ -25,8 +23,8 @@ export default function ChatConfirmBottomSheet({
     }
     setIsSubmitting(true);
     try {
-      const response = await createChatRoom(plannerId);
-      navigate(`/chat/${response.chatRoomId}`);
+      // const response = await createChatRoom(plannerId);
+      // navigate(`/chat/${response.chatRoomId}`);
     } catch (error) {
       defaultErrorHandler(error);
     } finally {
