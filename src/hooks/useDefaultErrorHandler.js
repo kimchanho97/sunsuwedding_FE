@@ -20,6 +20,7 @@ export default function useDefaultErrorHandler() {
         openBottomSheetHandler({ bottomSheet: "forbiddenBottomSheet" });
         break;
       case 401:
+        alert("세션이 만료되었습니다. 다시 로그인해주세요.");
         dispatch(logOut());
         break;
       default:
