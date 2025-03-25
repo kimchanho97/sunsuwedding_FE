@@ -38,7 +38,7 @@ export const getPortfolioListCursor = async (
   if (minPrice) params.append("minPrice", minPrice);
   if (maxPrice) params.append("maxPrice", maxPrice);
 
-  const response = await instance.get(`/api/portfolio/v3?${params.toString()}`);
+  const response = await instance.get(`/api/portfolio/v4?${params.toString()}`);
   return response.data;
 };
 
