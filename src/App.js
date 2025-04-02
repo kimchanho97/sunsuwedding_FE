@@ -12,11 +12,9 @@ import NotFoundPage from "./pages/common/NotFoundPage";
 import PaymentCompletePage from "./pages/common/PaymentCompletePage";
 import PaymentFailPage from "./pages/common/PaymentFailPage";
 import PortfolioDetailPage from "./pages/portfoliodetail/PortfolioDetailPage";
-import PrivacyPolicyPage from "./pages/main/PrivacyPolicyPage";
 import ProfilePage from "./pages/main/ProfilePage";
 import SearchPage from "./pages/portfolios/SearchPage";
 import SignupPage from "./pages/common/SignupPage";
-import TermsPage from "./pages/main/TermsPage";
 import DuplicatedCheckLayout from "./layouts/DuplicatedCheckLayout";
 import QuotationCollectPage from "./pages/quotation/QuotationCollectPage";
 import WritableReviewListPage from "./pages/review/WritableReviewListPage";
@@ -35,8 +33,6 @@ function App() {
             <Route path="/portfolios/:id" element={<PortfolioDetailPage />} />
             <Route path="/404" element={<NotFoundPage />} />
             <Route path="*" element={<NotFoundPage />} />
-            <Route path="/terms" element={<TermsPage />} />
-            <Route path="/policy" element={<PrivacyPolicyPage />} />
             <Route
               path="/portfolios/reviews/:plannerId"
               element={<PortfolioReviewPage />}
