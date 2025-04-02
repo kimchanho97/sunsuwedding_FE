@@ -2,9 +2,6 @@ import CircularProgress from "@mui/material/CircularProgress";
 import React, { useEffect, useRef, useState } from "react";
 import { signup } from "../../apis/user";
 import BackButtonHeader from "../../components/common/BackButtonHeader";
-import CloseButtonPage from "../../components/common/CloseButtonPage";
-import PrivacyPolicyData from "../../components/common/PrivacyPolicyData";
-import TermsData from "../../components/common/TermsData";
 import AlertBox from "../../components/common/accounts/AlertBox";
 import InputGroup from "../../components/common/accounts/InputGroup";
 import SignupCompletionSheet from "../../components/common/accounts/SignupCompletionSheet";
@@ -24,17 +21,13 @@ const USER_TYPE = {
 export default function SignupPage() {
   const [errorMessage, setErrorMessage] = useState("");
   const [activeButton, setActiveButton] = useState(USER_TYPE.COUPLE);
-  const [agreePolicy, setAgreePolicy] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCompletionSheetOpen, setIsCompletionSheetOpen] = useState(false); // 회원가입 완료 시 나타나는 bottom sheet
-  const [isTermsOpen, setIsTermsOpen] = useState(false); // 이용약관
-  const [isPrivacyPolicyOpen, setIsPrivacyPolicyOpen] = useState(false); // 개인정보 처리방침
 
   const nameInputRef = useRef(null);
   const emailInputRef = useRef(null);
   const passwordInputRef = useRef(null);
   const password2InputRef = useRef(null);
-  const agreePolicyRef = useRef(null);
   const { defaultErrorHandler } = useDefaultErrorHander();
   const { values, handleChange, setValues } = useInput({
     role: "couple",
@@ -57,10 +50,6 @@ export default function SignupPage() {
       return;
     }
     setValues({ ...values, role: "planner" });
-  };
-
-  const handleAgreement = () => {
-    setAgreePolicy(!agreePolicy);
   };
 
   const validateInput = async () => {
@@ -103,10 +92,6 @@ export default function SignupPage() {
       );
       return false;
     }
-    if (!agreePolicy) {
-      setErrorMessageAndFocus("이용약관에 동의해주세요.", agreePolicyRef);
-      return false;
-    }
     if (values.password !== values.password2) {
       setErrorMessageAndFocus(
         "비밀번호가 일치하지 않습니다.",
@@ -144,38 +129,11 @@ export default function SignupPage() {
     nameInputRef.current?.focus();
   }, []);
 
-  if (isTermsOpen) {
-    return (
-      <CloseButtonPage
-        onClose={() => {
-          setIsTermsOpen(false);
-        }}
-        headerName="이용약관"
-      >
-        <TermsData />
-      </CloseButtonPage>
-    );
-  }
-  if (isPrivacyPolicyOpen) {
-    return (
-      <CloseButtonPage
-        onClose={() => {
-          setIsPrivacyPolicyOpen(false);
-        }}
-        headerName="개인정보 처리방침"
-      >
-        <PrivacyPolicyData />
-      </CloseButtonPage>
-    );
-  }
-
   return (
     <Container className="h-full max-w-none">
       {isCompletionSheetOpen && (
         <SignupCompletionSheet
-          onClose={() => {
-            setIsCompletionSheetOpen(false);
-          }}
+          onClose={() => setIsCompletionSheetOpen(false)}
         />
       )}
       <BackButtonHeader>
@@ -258,43 +216,8 @@ export default function SignupPage() {
             placeholder="비밀번호 확인"
             value={values.password2}
             onChange={handleChange}
-            className="relative pt-[15px]"
+            className="relative pt-[15px] mb-[30px]"
           />
-          <div className="mt-[30px]">
-            <span className="flex gap-[5px]">
-              <input
-                type="checkbox"
-                id="policy"
-                name="policy-agree"
-                ref={agreePolicyRef}
-                checked={agreePolicy}
-                onChange={handleAgreement}
-                className="w-[14px] h-[14px] mt-[1px] rounded-[4px] border-lightgray-sunsu cursor-pointer accent-blue-sunsu"
-              />
-              <label htmlFor="policy" className="text-xs">
-                <button
-                  type="button"
-                  className="font-bold underline"
-                  onClick={() => {
-                    setIsTermsOpen(true);
-                  }}
-                >
-                  이용약관
-                </button>
-                ,{" "}
-                <button
-                  type="button"
-                  className="font-bold underline"
-                  onClick={() => {
-                    setIsPrivacyPolicyOpen(true);
-                  }}
-                >
-                  개인정보 처리방침
-                </button>
-                에 동의합니다.
-              </label>
-            </span>
-          </div>
           {errorMessage && (
             <AlertBox
               id="errorMessage"
@@ -311,9 +234,7 @@ export default function SignupPage() {
             </div>
           ) : (
             <Button
-              onClick={() => {
-                handleSubmit();
-              }}
+              onClick={() => handleSubmit()}
               disabled={isSubmitting}
               className={`block w-full h-[50px] mt-[5px] rounded-[10px] font-normal text-sm ${
                 isSubmitting ? "bg-zinc-300" : "bg-lightskyblue-sunsu"
