@@ -212,7 +212,7 @@
 
 ## ⚙️ 시작 가이드
 
-> Requirements: Node.js 18.x, npm 10.x
+> **Requirements: Node.js 18.x, npm 10.x**
 
 1. 프로젝트 클론
 
