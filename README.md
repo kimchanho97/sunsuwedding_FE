@@ -214,14 +214,14 @@
 
 > **Requirements: Node.js 18.x, npm 10.x**
 
-**1. 프로젝트 클론**
+1. 프로젝트 클론
 
     ```bash
     git clone https://github.com/kimchanho97/sunsuwedding_FE.git
     cd sunsuwedding_FE
     ```
 
-**2. 실행**
+2. 실행
 
     ```bash
     npm install
