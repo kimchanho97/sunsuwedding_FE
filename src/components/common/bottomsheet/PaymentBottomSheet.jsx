@@ -19,16 +19,17 @@ export default function PaymentBottomSheet({ onClose }) {
   const handleOnPayment = async () => {
     try {
       setIsLoading(true);
-      const tosspayments = await loadTossPayments(
-        process.env.REACT_APP_TOSS_CLIENT_KEY,
-      );
-      tossPaymentsRef.current = tosspayments;
-      // 요청을 보내기 전 결제정보를 DB에 저장하는 과정이 필요함
       const newOrderId = nanoid();
       await savePayment({
         amount: sunsuMembershipPrice,
         orderId: newOrderId,
       });
+
+      const tosspayments = await loadTossPayments(
+        process.env.REACT_APP_TOSS_CLIENT_KEY,
+      );
+      tossPaymentsRef.current = tosspayments;
+
       await tosspayments.requestPayment("카드", {
         amount: sunsuMembershipPrice,
         orderId: newOrderId,
