@@ -33,6 +33,7 @@ function ChatInput({ stompClient }) {
   };
 
   const createMessage = useCallback(() => {
+    setLoading(true);
     return {
       user: {
         userId: userInfo.userId,
