@@ -28,6 +28,8 @@ function App() {
       <Routes>
         <Route element={<RootLayout />}>
           <Route element={<MainLayout />}>
+            <Route path="/chat/list" element={<ChatListPage />} />
+            <Route path="/chat-room/:chatRoomId" element={<ChatRoomPage />} />
             <Route path="/" element={<MainPage />} />
             <Route path="/search" element={<SearchPage />} />
             <Route path="/portfolios/:id" element={<PortfolioDetailPage />} />
@@ -50,8 +52,6 @@ function App() {
               element={<PaymentCompletePage />}
             />
             <Route path="/payments/fail" element={<PaymentFailPage />} />
-            <Route path="/chat/list" element={<ChatListPage />} />
-            <Route path="/chat/:chatId" element={<ChatRoomPage />} />
             <Route
               path="/profile/create/portfolio"
               element={<CreatePortfolioPage />}

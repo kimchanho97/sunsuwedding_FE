@@ -1,7 +1,12 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
+import SockJS from "sockjs-client";
+import { Client } from "@stomp/stompjs";
+import { useParams } from "react-router-dom";
 import ChatInput from "../../components/chat/ChatInput";
 
 export default function ChatRoomPage() {
+  const { chatRoomId } = useParams();
+  const stompClientRef = useRef(null);
   // const { userInfo } = useSelector((state) => state.user);
   // const { chatId } = useParams();
   const messageEndRef = useRef(null);
@@ -12,10 +17,7 @@ export default function ChatRoomPage() {
     const viewportHeight = viewport.height;
     window.innerHeight = viewportHeight;
   }
-
   viewport.addEventListener("resize", adjustLayout);
-
-  // 초기 레이아웃 조정
   adjustLayout();
 
   // 3. 메세지가 추가될 때마다 스크롤 내리기
@@ -24,6 +26,31 @@ export default function ChatRoomPage() {
   // }, [messages.length]);
 
   // if (isLoading) return <Spinner />;
+
+  useEffect(() => {
+    const socket = new SockJS("http://localhost:8080/ws");
+    const client = new Client({
+      webSocketFactory: () => socket,
+      reconnectDelay: 5000,
+      onConnect: () => {
+        console.log("🟢 STOMP 연결 성공");
+        client.subscribe(`/topic/chat/room/${chatRoomId}`, (message) => {
+          const received = JSON.parse(message.body);
+          console.log("✅ 수신 메시지:", received);
+          // 메시지 목록에 추가 등
+        });
+      },
+    });
+
+    stompClientRef.current = client;
+    client.activate();
+
+    return () => {
+      if (client.connected) {
+        client.deactivate();
+      }
+    };
+  }, [chatRoomId]);
 
   return (
     <div className="flex flex-col w-full h-full">
@@ -58,7 +85,7 @@ export default function ChatRoomPage() {
       </div>
       {/* 메세지 입력창 */}
       <div className=" w-full z-10 bg-white fixed bottom-10 max-w-[576px]">
-        <ChatInput />
+        <ChatInput stompClient={stompClientRef.current} />
       </div>
     </div>
   );

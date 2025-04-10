@@ -12,14 +12,14 @@ import ImageModal from "../common/modal/ImageModal";
 import { ReactComponent as SendIcon } from "../../assets/send-01.svg";
 import { ReactComponent as GalleryIcon } from "../../assets/gallery-01.svg";
 
-function ChatInput() {
+function ChatInput({ stompClient }) {
   const { userInfo } = useSelector((state) => state.user);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false); // 메세지 전송 여부
   const [imageModalOpen, setImageModalOpen] = useState(false); // 이미지 모달
   const [uploading, setUploading] = useState(false); // 이미지 업로드 여부
   const [percent, setPercent] = useState(0); // 이미지 업로드 퍼센트
-  const { chatId } = useParams();
+  const { chatRoomId } = useParams();
 
   const handleOpenImageModal = useCallback(() => {
     setImageModalOpen(true);
@@ -44,15 +44,23 @@ function ChatInput() {
   }, [message]);
 
   const onClickSendMessage = useCallback(async () => {
-    if (!message) return;
-    setLoading(true);
-    try {
-      setLoading(false);
-      setMessage("");
-    } catch (error) {
-      setLoading(false);
-    }
-  }, [chatId, createMessage, message]);
+    if (!stompClient || !stompClient.connected || !message) return;
+
+    const payload = {
+      chatRoomId,
+      // senderId: userInfo.userId,
+      // senderName: userInfo.username,
+      content: message,
+      messageType: "TEXT",
+      createAt: new Date().toISOString(),
+    };
+
+    stompClient.publish({
+      destination: `/app/chat-rooms/${chatRoomId}/messages`,
+      body: JSON.stringify(payload),
+    });
+    setMessage("");
+  }, [chatRoomId, createMessage, message]);
 
   const onKeyDownEnter = (e) => {
     if (e.isComposing || e.keyCode === 229) return;
