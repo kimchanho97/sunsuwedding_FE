@@ -19,7 +19,7 @@ function ChatInput({ stompClient }) {
   const [imageModalOpen, setImageModalOpen] = useState(false); // 이미지 모달
   const [uploading, setUploading] = useState(false); // 이미지 업로드 여부
   const [percent, setPercent] = useState(0); // 이미지 업로드 퍼센트
-  const { chatRoomId } = useParams();
+  const { chatRoomCode } = useParams();
 
   const handleOpenImageModal = useCallback(() => {
     setImageModalOpen(true);
@@ -47,7 +47,7 @@ function ChatInput({ stompClient }) {
   const onClickSendMessage = useCallback(async () => {
     if (!stompClient || !stompClient.connected || !message) return;
     const payload = {
-      chatRoomId,
+      chatRoomCode,
       senderId: userInfo.userId,
       senderName: userInfo.username,
       content: message,
@@ -56,11 +56,11 @@ function ChatInput({ stompClient }) {
     };
     console.log("✅ 전송 메시지:", payload);
     stompClient.publish({
-      destination: `/app/chat-rooms/${chatRoomId}/messages`,
+      destination: `/app/chat-rooms/${chatRoomCode}/messages`,
       body: JSON.stringify(payload),
     });
     setMessage("");
-  }, [chatRoomId, createMessage, message]);
+  }, [chatRoomCode, createMessage, message]);
 
   const onKeyDownEnter = (e) => {
     if (e.isComposing || e.keyCode === 229) return;

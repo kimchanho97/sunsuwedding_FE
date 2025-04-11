@@ -20,6 +20,7 @@ import QuotationCollectPage from "./pages/quotation/QuotationCollectPage";
 import WritableReviewListPage from "./pages/review/WritableReviewListPage";
 import ReviewListPage from "./pages/review/ReviewListPage";
 import PortfolioReviewPage from "./pages/review/PortfolioReviewPage";
+import ChatRoomValidatorLayout from "./layouts/ChatRoomValidatorLayout";
 
 function App() {
   // 주석
@@ -29,7 +30,6 @@ function App() {
         <Route element={<RootLayout />}>
           <Route element={<MainLayout />}>
             <Route path="/chat/list" element={<ChatListPage />} />
-            <Route path="/chat-rooms/:chatRoomId" element={<ChatRoomPage />} />
             <Route path="/" element={<MainPage />} />
             <Route path="/search" element={<SearchPage />} />
             <Route path="/portfolios/:id" element={<PortfolioDetailPage />} />
@@ -44,6 +44,12 @@ function App() {
           <Route element={<DuplicatedCheckLayout />}>
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/login" element={<LoginPage />} />
+          </Route>
+          <Route element={<ChatRoomValidatorLayout />}>
+            <Route
+              path="/chat-rooms/:chatRoomCode"
+              element={<ChatRoomPage />}
+            />
           </Route>
           <Route element={<RequiredAuthLayout />}>
             <Route path="/profile" element={<ProfilePage />} />

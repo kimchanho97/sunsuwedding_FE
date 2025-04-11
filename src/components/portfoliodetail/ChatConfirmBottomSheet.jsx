@@ -28,7 +28,7 @@ export default function ChatConfirmBottomSheet({
     try {
       const response = await createChatRoom(userInfo.userId, plannerId);
       console.log(response);
-      navigate(`/chat-rooms/${response.chatRoomId}`);
+      navigate(`/chat-rooms/${response.chatRoomCode}`);
     } catch (error) {
       defaultErrorHandler(error);
     } finally {

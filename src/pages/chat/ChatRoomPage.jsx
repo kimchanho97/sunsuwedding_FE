@@ -16,12 +16,13 @@ import Spinner from "../../components/common/atoms/Spinner";
 import { convertToDate } from "../../utils/convert";
 import ChatMessage from "../../components/chat/ChatMessage";
 import DateSeperationLine from "../../components/chat/DateSeperationLine";
+import ChatHeader from "../../components/chat/ChatHeader";
 
 export default function ChatRoomPage() {
-  const { chatRoomId } = useParams();
+  const { chatRoomCode } = useParams();
   const { userInfo } = useSelector((state) => state.user);
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
-    useChatMessages(chatRoomId);
+    useChatMessages(chatRoomCode);
 
   const [stompClient, setStompClient] = useState(null);
   const [newMessages, setNewMessages] = useState([]);
@@ -150,7 +151,7 @@ export default function ChatRoomPage() {
       reconnectDelay: 5000,
       onConnect: () => {
         console.log("STOMP 연결 성공");
-        client.subscribe(`/topic/chat/rooms/${chatRoomId}`, (message) => {
+        client.subscribe(`/topic/chat/rooms/${chatRoomCode}`, (message) => {
           const received = JSON.parse(message.body);
           console.log("수신 메시지:", received);
           setNewMessages((prev) => [...prev, received]);
@@ -163,15 +164,17 @@ export default function ChatRoomPage() {
     return () => {
       if (client.connected) client.deactivate();
     };
-  }, [chatRoomId]);
+  }, [chatRoomCode]);
 
   if (isLoading) return <Spinner />;
   let prevDate = null;
   return (
     <div
-      className="flex flex-col w-full h-full overflow-y-auto h-screen"
+      className="flex flex-col w-full overflow-y-auto h-screen"
       ref={scrollRef}
     >
+      {/* 헤더 영역 */}
+      <ChatHeader />
       {/* 메시지 영역 */}
       <div className="px-[12px] pt-3 flex flex-col gap-[8px] relative mb-[80px]">
         {/* 무한 스크롤 상단 옵저버 */}

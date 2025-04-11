@@ -3,10 +3,11 @@ import { fetchChatMessages } from "../apis/chat";
 
 const PAGE_SIZE = 15;
 
-const useChatMessages = (chatRoomId) => {
+const useChatMessages = (chatRoomCode) => {
   return useInfiniteQuery(
-    ["chatMessages", chatRoomId],
-    ({ pageParam = 0 }) => fetchChatMessages(chatRoomId, pageParam, PAGE_SIZE),
+    ["chatMessages", chatRoomCode],
+    ({ pageParam = 0 }) =>
+      fetchChatMessages(chatRoomCode, pageParam, PAGE_SIZE),
     {
       getNextPageParam: (lastPage, allPages) =>
         lastPage.hasNext ? allPages.length : undefined,
