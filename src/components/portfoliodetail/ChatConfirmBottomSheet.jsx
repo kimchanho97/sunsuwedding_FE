@@ -1,33 +1,38 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import CircularProgress from "@mui/material/CircularProgress";
+import { useNavigate } from "react-router";
 import BottomSheet from "../common/bottomsheet/BottomSheet";
 import useOpenBottomSheet from "../../hooks/useOpenBottomSheet";
 import useDefaultErrorHandler from "../../hooks/useDefaultErrorHandler";
+import { createChatRoom } from "../../apis/chat";
 
 export default function ChatConfirmBottomSheet({
   plannerName,
-  // plannerId,
+  plannerId,
   onClose,
 }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { isLogged } = useSelector((state) => state.user);
-  // const navigate = useNavigate();
+  const { isLogged, userInfo } = useSelector((state) => state.user);
+  const navigate = useNavigate();
   const { defaultErrorHandler } = useDefaultErrorHandler();
   const { openBottomSheetHandler } = useOpenBottomSheet();
 
   const handleOnCreateChatRoom = async () => {
     if (!isLogged) {
+      onClose();
       openBottomSheetHandler({ bottomSheet: "loginBottomSheet" });
       return;
     }
     setIsSubmitting(true);
     try {
-      // const response = await createChatRoom(plannerId);
-      // navigate(`/chat/${response.chatRoomId}`);
+      const response = await createChatRoom(userInfo.userId, plannerId);
+      console.log(response);
+      navigate(`/chat-rooms/${response.chatRoomId}`);
     } catch (error) {
       defaultErrorHandler(error);
     } finally {
+      onClose();
       setIsSubmitting(false);
     }
   };
