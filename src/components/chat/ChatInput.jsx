@@ -46,16 +46,15 @@ function ChatInput({ stompClient }) {
 
   const onClickSendMessage = useCallback(async () => {
     if (!stompClient || !stompClient.connected || !message) return;
-
     const payload = {
       chatRoomId,
-      // senderId: userInfo.userId,
-      // senderName: userInfo.username,
+      senderId: userInfo.userId,
+      senderName: userInfo.username,
       content: message,
       messageType: "TEXT",
-      createAt: new Date().toISOString(),
+      createdAt: new Date().toISOString(),
     };
-
+    console.log("✅ 전송 메시지:", payload);
     stompClient.publish({
       destination: `/app/chat-rooms/${chatRoomId}/messages`,
       body: JSON.stringify(payload),

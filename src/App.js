@@ -29,7 +29,7 @@ function App() {
         <Route element={<RootLayout />}>
           <Route element={<MainLayout />}>
             <Route path="/chat/list" element={<ChatListPage />} />
-            <Route path="/chat-room/:chatRoomId" element={<ChatRoomPage />} />
+            <Route path="/chat-rooms/:chatRoomId" element={<ChatRoomPage />} />
             <Route path="/" element={<MainPage />} />
             <Route path="/search" element={<SearchPage />} />
             <Route path="/portfolios/:id" element={<PortfolioDetailPage />} />

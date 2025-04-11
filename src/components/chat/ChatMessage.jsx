@@ -1,20 +1,19 @@
 import dayjs from "dayjs";
 import React from "react";
-import Photo from "../common/atoms/Photo";
 
-function ChatMessage({ message, isSender, counterAvatar }) {
+function ChatMessage({ message, isSender }) {
   return (
     <div className={`flex gap-1  ${isSender ? "flex-row-reverse" : ""}`}>
-      {!isSender && (
-        <Photo
-          src={counterAvatar}
-          alt="avatar"
-          className="w-8 h-8 object-cover object-center rounded-full"
-        />
-      )}
-      {message.image ? (
+      {/* {!isSender && ( */}
+      {/*  <Photo */}
+      {/*    src={counterAvatar} */}
+      {/*    alt="avatar" */}
+      {/*    className="w-8 h-8 object-cover object-center rounded-full" */}
+      {/*  /> */}
+      {/* )} */}
+      {message.messageType === "IMAGE" ? (
         <img
-          src={message.image}
+          src={message.content}
           alt="이미지"
           className="max-w-[70%] max-h-[400px]"
         />
@@ -30,12 +29,10 @@ function ChatMessage({ message, isSender, counterAvatar }) {
         </div>
       )}
       <div
-        className={`self-end text-xs flex flex-col ${
-          isSender ? "items-end" : ""
-        }`}
+        className={`self-end text-xs flex flex-col ${isSender ? "items-end" : ""}`}
       >
-        <span className="text-zinc-500">{message.isRead ? "" : 1}</span>
-        <span>{dayjs(message.timestamp).format("HH:mm")}</span>
+        {/* <span className="text-zinc-500">{message.isRead ? "" : 1}</span> */}
+        <span>{dayjs(message.createdAt).format("HH:mm")}</span>
       </div>
     </div>
   );

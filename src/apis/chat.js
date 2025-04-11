@@ -1,7 +1,6 @@
-import { instance } from "./index";
+import { chatInstance } from "./index";
 
-export const createChatRoom = async (plannerId) => {
-  return instance.post("/api/chat/room", {
-    plannerId,
+export const fetchChatMessages = (chatRoomId, page, size) =>
+  chatInstance.get(`/api/chat-messages/${chatRoomId}`, {
+    params: { page, size },
   });
-};

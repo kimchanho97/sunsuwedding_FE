@@ -32,3 +32,20 @@ instance.interceptors.response.use(
     return Promise.reject(error);
   },
 );
+
+export const chatInstance = axios.create({
+  baseURL: process.env.REACT_APP_CHAT_SERVER_URL,
+  timeout: 5000,
+  withCredentials: true,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+chatInstance.interceptors.response.use(
+  (response) => response.data,
+  (error) => {
+    // 필요시 chat 전용 에러 처리
+    return Promise.reject(error);
+  },
+);
