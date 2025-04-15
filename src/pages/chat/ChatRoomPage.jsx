@@ -170,15 +170,21 @@ export default function ChatRoomPage() {
   let prevDate = null;
   return (
     <div
-      className="flex flex-col w-full overflow-y-auto h-screen"
+      className="flex flex-col w-full overflow-y-auto"
+      style={{ height: "calc(100vh - 50px)" }}
       ref={scrollRef}
     >
       {/* 헤더 영역 */}
-      <ChatHeader />
+      <div className="fixed top-0 left-0 right-0 z-20 max-w-[576px] w-full mx-auto">
+        <ChatHeader
+          otherUserName="홍길동"
+          avatarUrl="https://avatars.githubusercontent.com/u/104095041?u=9698ba59daf7b9e7f6b8e1f8cb6fb2646af7e8ba&v=4"
+        />
+      </div>
       {/* 메시지 영역 */}
-      <div className="px-[12px] pt-3 flex flex-col gap-[8px] relative mb-[80px]">
+      <div className="px-[12px] pt-3 flex flex-col gap-[8px] relative mb-[80px] mt-[50px]">
         {/* 무한 스크롤 상단 옵저버 */}
-        <div ref={topObserverRef} className="h-1" />
+        <div ref={topObserverRef} />
         {messages.map((message) => {
           const currentDate = convertToDate(message.createdAt);
           const showDate = prevDate !== currentDate;
