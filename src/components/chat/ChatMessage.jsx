@@ -4,13 +4,6 @@ import React from "react";
 function ChatMessage({ message, isSender }) {
   return (
     <div className={`flex gap-1  ${isSender ? "flex-row-reverse" : ""}`}>
-      {/* {!isSender && ( */}
-      {/*  <Photo */}
-      {/*    src={counterAvatar} */}
-      {/*    alt="avatar" */}
-      {/*    className="w-8 h-8 object-cover object-center rounded-full" */}
-      {/*  /> */}
-      {/* )} */}
       {message.messageType === "IMAGE" ? (
         <img
           src={message.content}

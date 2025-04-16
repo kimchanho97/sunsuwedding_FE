@@ -1,12 +1,7 @@
 import React from "react";
 import BackButtonHeader from "../common/BackButtonHeader";
 
-export default function ChatHeader({ otherUserName, avatarUrl }) {
-  const isOnline = true; // Placeholder for online status
-
-  // 나의 접속 상태 관리
-  // 상태방의 접속 상태 조회
-
+export default function ChatHeader({ isOnline, otherUserName, avatarUrl }) {
   return (
     <BackButtonHeader>
       <div className="pl-10 flex items-center gap-2">

@@ -25,6 +25,7 @@ export default function ChatRoomPage() {
     useChatMessages(chatRoomCode);
 
   const [stompClient, setStompClient] = useState(null);
+  const [isChatPartnerOnline, setIsChatPartnerOnline] = useState(false);
   const [newMessages, setNewMessages] = useState([]);
 
   // 메시지 배열은 서버에서 받아온 데이터는 reverse 후, 새 메시지(실시간)를 추가하는 형태
@@ -60,7 +61,7 @@ export default function ChatRoomPage() {
     }
   }, [newMessages, scrollToBottom]);
 
-  // ✅ (중요) 화면이 클 때 자동 추가 페칭: "while" 방식 혹은 재귀 방식
+  // ✅ 화면이 클 때 자동 추가 페칭: "while" 방식 혹은 재귀 방식
   useEffect(() => {
     function fillScreenIfNeeded(attempts = 0) {
       if (!scrollRef.current) return;
@@ -143,28 +144,62 @@ export default function ChatRoomPage() {
     }
   }, [messages, prevScrollHeight, isFetchingNextPage, isPaginating]);
 
-  // STOMP 연결 및 실시간 메시지 수신
+  // STOMP 연결
   useEffect(() => {
-    const socket = new SockJS(`${process.env.REACT_APP_CHAT_SERVER_URL}/ws`);
     const client = new Client({
-      webSocketFactory: () => socket,
+      webSocketFactory: () =>
+        new SockJS(`${process.env.REACT_APP_CHAT_SERVER_URL}/ws`),
       reconnectDelay: 5000,
       onConnect: () => {
         console.log("STOMP 연결 성공");
+        const chatPartnerId = userInfo.userId === 32 ? 31 : 32;
+
+        // 1. 채팅 메시지 수신
         client.subscribe(`/topic/chat/rooms/${chatRoomCode}`, (message) => {
           const received = JSON.parse(message.body);
-          console.log("수신 메시지:", received);
           setNewMessages((prev) => [...prev, received]);
         });
+
+        // 2. 상대방 상태 구독
+        client.subscribe(`/topic/presence/${chatPartnerId}`, (message) => {
+          console.log("상대방 상태 수신:", message);
+          const { status } = JSON.parse(message.body);
+          setIsChatPartnerOnline(status === "online");
+        });
+
+        // 3. 본인 접속 상태 서버에 알림
+        client.publish({
+          destination: "/app/presence",
+          body: JSON.stringify({
+            chatPartnerId,
+            userId: userInfo.userId,
+          }),
+        });
+
+        // 4. 주기적인 상태 갱신
+        const pingInterval = setInterval(() => {
+          client.publish({
+            destination: "/app/presence/ping",
+            body: JSON.stringify({ userId: userInfo.userId }),
+          });
+        }, 60000); // 60초마다 ping 전송
+
         setStompClient(client);
+        // 정리: 페이지 나갈 때 interval 제거
+        return () => clearInterval(pingInterval);
       },
     });
 
     client.activate();
+
+    // 페이지 나가기 전 STOMP 연결 해제
+    window.addEventListener("beforeunload", () => {
+      client.deactivate();
+    });
     return () => {
       if (client.connected) client.deactivate();
     };
-  }, [chatRoomCode]);
+  }, [chatRoomCode, userInfo.userId]);
 
   if (isLoading) return <Spinner />;
   let prevDate = null;
@@ -179,10 +214,11 @@ export default function ChatRoomPage() {
         <ChatHeader
           otherUserName="홍길동"
           avatarUrl="https://avatars.githubusercontent.com/u/104095041?u=9698ba59daf7b9e7f6b8e1f8cb6fb2646af7e8ba&v=4"
+          isOnline={isChatPartnerOnline}
         />
       </div>
       {/* 메시지 영역 */}
-      <div className="px-[12px] pt-3 flex flex-col gap-[8px] relative mb-[80px] mt-[50px]">
+      <div className="px-[16px] pt-3 flex flex-col gap-[10px] relative mb-[80px] mt-[50px]">
         {/* 무한 스크롤 상단 옵저버 */}
         <div ref={topObserverRef} />
         {messages.map((message) => {
