@@ -1,8 +1,7 @@
 import { instance } from "./index";
 
-export const getFavoriteList = async (page) => {
-  const res = await instance.get(`/api/favorite?page=${page}`);
-  return res.data;
+export const getFavoriteList = (page) => {
+  return instance.get(`/api/favorite?page=${page}`);
 };
 
 export const addFavorite = async ({ portfolioId }) => {
