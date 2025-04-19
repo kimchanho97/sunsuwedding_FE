@@ -1,7 +1,12 @@
 import dayjs from "dayjs";
 import React from "react";
+import { useSelector } from "react-redux";
 
-function ChatMessage({ message, isSender }) {
+function ChatMessage({ message }) {
+  const { userInfo } = useSelector((state) => state.user);
+  const isSender = message.senderId === userInfo.userId;
+  const unreadCount = 2 - (message.readBy?.length || 0);
+
   return (
     <div className={`flex gap-1  ${isSender ? "flex-row-reverse" : ""}`}>
       {message.messageType === "IMAGE" ? (
@@ -24,7 +29,7 @@ function ChatMessage({ message, isSender }) {
       <div
         className={`self-end text-xs flex flex-col ${isSender ? "items-end" : ""}`}
       >
-        {/* <span className="text-zinc-500">{message.isRead ? "" : 1}</span> */}
+        {unreadCount !== 0 && <span className="text-zinc-500">1</span>}
         <span>{dayjs(message.createdAt).format("HH:mm")}</span>
       </div>
     </div>

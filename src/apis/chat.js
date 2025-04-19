@@ -1,13 +1,9 @@
 import { chatInstance } from "./index";
 
-export const fetchChatMessages = async (chatRoomCode, page, size) => {
-  const response = await chatInstance.get(
-    `/api/chat-messages/${chatRoomCode}`,
-    {
-      params: { page, size },
-    },
-  );
-  return response.data;
+export const fetchChatMessages = (chatRoomCode, page, size) => {
+  return chatInstance.get(`/api/chat-messages/${chatRoomCode}`, {
+    params: { page, size },
+  });
 };
 
 export const createChatRoom = async (userId, plannerId) => {

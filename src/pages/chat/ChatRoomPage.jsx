@@ -10,6 +10,7 @@ import SockJS from "sockjs-client";
 import { Client } from "@stomp/stompjs";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { useQueryClient } from "react-query";
 import ChatInput from "../../components/chat/ChatInput";
 import useChatMessages from "../../hooks/useChatMessages";
 import Spinner from "../../components/common/atoms/Spinner";
@@ -20,9 +21,11 @@ import ChatHeader from "../../components/chat/ChatHeader";
 
 export default function ChatRoomPage() {
   const { chatRoomCode } = useParams();
+  const queryClient = useQueryClient();
+  const [isStompReady, setIsStompReady] = useState(false);
   const { userInfo } = useSelector((state) => state.user);
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
-    useChatMessages(chatRoomCode);
+    useChatMessages(chatRoomCode, { enabled: isStompReady }); // STOMP 연결 후에만 메시지 페칭
 
   const [stompClient, setStompClient] = useState(null);
   const [isChatPartnerOnline, setIsChatPartnerOnline] = useState(false);
@@ -30,7 +33,8 @@ export default function ChatRoomPage() {
 
   // 메시지 배열은 서버에서 받아온 데이터는 reverse 후, 새 메시지(실시간)를 추가하는 형태
   const messages = useMemo(() => {
-    const fetched = data?.pages.flatMap((page) => page.data).reverse() || [];
+    const fetched =
+      data?.pages.flatMap((page) => page?.data ?? []).reverse() || [];
     return [...fetched, ...newMessages];
   }, [data, newMessages]);
 
@@ -45,6 +49,8 @@ export default function ChatRoomPage() {
   const scrollToBottom = useCallback(() => {
     messageEndRef.current?.scrollIntoView({ behavior: "auto" });
   }, []);
+
+  const chatPartnerId = userInfo.userId === 32 ? 31 : 32;
 
   // 최초 로딩 시 스크롤 하단 이동 (최신 메시지 보여줌)
   useEffect(() => {
@@ -152,36 +158,47 @@ export default function ChatRoomPage() {
       reconnectDelay: 5000,
       onConnect: () => {
         console.log("STOMP 연결 성공");
-        const chatPartnerId = userInfo.userId === 32 ? 31 : 32;
-
         // 1. 채팅 메시지 수신
-        client.subscribe(`/topic/chat/rooms/${chatRoomCode}`, (message) => {
+        client.subscribe(`/topic/chat-rooms/${chatRoomCode}`, (message) => {
           const received = JSON.parse(message.body);
+          // console.log("✅ 수신 메시지:", received);
           setNewMessages((prev) => [...prev, received]);
         });
 
         // 2. 상대방 상태 구독
-        client.subscribe(`/topic/presence/${chatPartnerId}`, (message) => {
-          console.log("상대방 상태 수신:", message);
-          const { status } = JSON.parse(message.body);
-          setIsChatPartnerOnline(status === "online");
-        });
+        client.subscribe(
+          `/topic/presence/${chatRoomCode}/${chatPartnerId}`,
+          (message) => {
+            const { status } = JSON.parse(message.body);
+            setIsChatPartnerOnline(status === "online");
+            // 상대가 online이 되면, 채팅방의 메시지 목록을 refetch
+            if (status === "online") {
+              setNewMessages([]);
+              queryClient.invalidateQueries(["chatMessages", chatRoomCode]);
+            }
+          },
+        );
 
         // 3. 본인 접속 상태 서버에 알림
         client.publish({
-          destination: "/app/presence",
+          destination: `/app/presence/${chatRoomCode}`,
           body: JSON.stringify({
-            chatPartnerId,
             userId: userInfo.userId,
           }),
         });
+        // 약간의 delay 후 fetch
+        setTimeout(() => setIsStompReady(true), 200);
 
         // 4. 주기적인 상태 갱신
         const pingInterval = setInterval(() => {
-          client.publish({
-            destination: "/app/presence/ping",
-            body: JSON.stringify({ userId: userInfo.userId }),
-          });
+          if (client.connected) {
+            client.publish({
+              destination: `/app/presence/ping/${chatRoomCode}`,
+              body: JSON.stringify({ userId: userInfo.userId }),
+            });
+          } else {
+            console.warn("⛔ STOMP 연결 안 됨. ping 생략");
+          }
         }, 60000); // 60초마다 ping 전송
 
         setStompClient(client);
@@ -191,17 +208,22 @@ export default function ChatRoomPage() {
     });
 
     client.activate();
-
-    // 페이지 나가기 전 STOMP 연결 해제
-    window.addEventListener("beforeunload", () => {
-      client.deactivate();
-    });
-    return () => {
-      if (client.connected) client.deactivate();
-    };
+    return () => client.deactivate();
   }, [chatRoomCode, userInfo.userId]);
 
-  if (isLoading) return <Spinner />;
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (stompClient?.connected) stompClient.deactivate();
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      if (stompClient?.connected) stompClient.deactivate();
+    };
+  }, [stompClient]);
+
+  if (isLoading || !isStompReady) return <Spinner />;
   let prevDate = null;
   return (
     <div
@@ -226,12 +248,9 @@ export default function ChatRoomPage() {
           const showDate = prevDate !== currentDate;
           prevDate = currentDate;
           return (
-            <React.Fragment key={String(message.id)}>
+            <React.Fragment key={message.messageId}>
               {showDate && <DateSeperationLine date={currentDate} />}
-              <ChatMessage
-                message={message}
-                isSender={message.senderId === userInfo.userId}
-              />
+              <ChatMessage message={message} />
             </React.Fragment>
           );
         })}
