@@ -228,6 +228,12 @@ export default function ChatRoomPage() {
     };
   }, [stompClient]);
 
+  useEffect(() => {
+    return () => {
+      queryClient.removeQueries(["chatMessages", chatRoomCode]);
+    };
+  }, [chatRoomCode]);
+
   if (isLoading || !isStompReady || isPartnerLoading) return <Spinner />;
   let prevDate = null;
   return (
