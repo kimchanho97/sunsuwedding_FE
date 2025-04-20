@@ -2,31 +2,32 @@ import dayjs from "dayjs";
 import React from "react";
 import { Link } from "react-router-dom";
 import Photo from "../common/atoms/Photo";
+import { defaultAvatarUrl } from "../../utils/constants";
 
 export default function ChatRoomItem({
-  timestamp,
-  counterName,
+  chatRoomCode,
+  chatPartnerName,
+  lastMessageAt,
   lastMessage,
-  chatId,
   unreadCount,
-  avatar,
+  avatarUrl,
 }) {
   return (
     <Link
       className=" block px-[29px] pt-[15px] pb-[20px] w-full hover:bg-zinc-100"
-      to={`/chat/${chatId}`}
+      to={`/chat/rooms/${chatRoomCode}`}
     >
       <div className="flex items-center w-full gap-2">
         <Photo
-          src={avatar}
-          alt={`${counterName}님의 프로필 사진`}
+          src={avatarUrl || defaultAvatarUrl}
+          alt={`${chatPartnerName}님의 프로필 사진`}
           className="w-12 h-12 object-cover object-center rounded-2xl shrink-0"
         />
         <div className="flex flex-col grow">
           <div className="flex justify-between w-full">
-            <span className="text-base font-bold">{counterName}</span>
+            <span className="text-base font-bold">{chatPartnerName}</span>
             <span className="text-sm text-zinc-500">
-              {dayjs(timestamp).format("YYYY.MM.DD")}
+              {dayjs(lastMessageAt).format("YYYY.MM.DD")}
             </span>
           </div>
           <div className="flex justify-between w-full">

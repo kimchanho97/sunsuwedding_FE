@@ -56,7 +56,7 @@ export default function GNB() {
         )}
       </Link>
       <Link
-        to="/chat/list"
+        to="/chat/rooms"
         onClick={checkLoginStatus}
         className="text-black w-full flex items-center justify-center"
         aria-label="채팅으로 이동"

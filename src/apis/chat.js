@@ -1,4 +1,4 @@
-import { chatInstance } from "./index";
+import { chatInstance, instance } from "./index";
 
 export const fetchChatMessages = (chatRoomCode, page, size) => {
   return chatInstance.get(`/api/chat/messages/${chatRoomCode}`, {
@@ -41,4 +41,17 @@ export const sendChatImageMessage = async (
       headers: { "Content-Type": "multipart/form-data" },
     },
   );
+};
+
+export const fetchChatRooms = (userId, size) => {
+  return chatInstance.get("/api/chat/rooms", {
+    params: { userId, size },
+  });
+};
+
+export const fetchChatPartnerProfile = async (chatRoomCode, requesterId) => {
+  const res = await instance.get(`/api/chat-room-partner/${chatRoomCode}`, {
+    params: { requesterId },
+  });
+  return res.data;
 };

@@ -18,6 +18,7 @@ import { convertToDate } from "../../utils/convert";
 import ChatMessage from "../../components/chat/ChatMessage";
 import DateSeperationLine from "../../components/chat/DateSeperationLine";
 import ChatHeader from "../../components/chat/ChatHeader";
+import useChatPartnerProfile from "../../hooks/useChatPartnerProfile";
 
 export default function ChatRoomPage() {
   const { chatRoomCode } = useParams();
@@ -50,7 +51,8 @@ export default function ChatRoomPage() {
     messageEndRef.current?.scrollIntoView({ behavior: "auto" });
   }, []);
 
-  const chatPartnerId = userInfo.userId === 32 ? 31 : 32;
+  const { data: partnerProfile, isLoading: isPartnerLoading } =
+    useChatPartnerProfile(chatRoomCode, userInfo.userId);
 
   // 최초 로딩 시 스크롤 하단 이동 (최신 메시지 보여줌)
   useEffect(() => {
@@ -152,6 +154,8 @@ export default function ChatRoomPage() {
 
   // STOMP 연결
   useEffect(() => {
+    if (!partnerProfile) return;
+
     const client = new Client({
       webSocketFactory: () =>
         new SockJS(`${process.env.REACT_APP_CHAT_SERVER_URL}/ws`),
@@ -167,7 +171,7 @@ export default function ChatRoomPage() {
 
         // 2. 상대방 상태 구독
         client.subscribe(
-          `/topic/presence/${chatRoomCode}/${chatPartnerId}`,
+          `/topic/presence/${chatRoomCode}/${partnerProfile.partnerUserId}`,
           (message) => {
             const { status } = JSON.parse(message.body);
             setIsChatPartnerOnline(status === "online");
@@ -208,8 +212,9 @@ export default function ChatRoomPage() {
     });
 
     client.activate();
+    // eslint-disable-next-line consistent-return
     return () => client.deactivate();
-  }, [chatRoomCode, userInfo.userId]);
+  }, [chatRoomCode, userInfo.userId, partnerProfile]);
 
   useEffect(() => {
     const handleBeforeUnload = () => {
@@ -223,7 +228,7 @@ export default function ChatRoomPage() {
     };
   }, [stompClient]);
 
-  if (isLoading || !isStompReady) return <Spinner />;
+  if (isLoading || !isStompReady || isPartnerLoading) return <Spinner />;
   let prevDate = null;
   return (
     <div
@@ -234,8 +239,8 @@ export default function ChatRoomPage() {
       {/* 헤더 영역 */}
       <div className="fixed top-0 left-0 right-0 z-20 max-w-[576px] w-full mx-auto">
         <ChatHeader
-          otherUserName="홍길동"
-          avatarUrl="https://avatars.githubusercontent.com/u/104095041?u=9698ba59daf7b9e7f6b8e1f8cb6fb2646af7e8ba&v=4"
+          partnerName={partnerProfile.partnerName}
+          avatarUrl={partnerProfile.avatarUrl}
           isOnline={isChatPartnerOnline}
         />
       </div>

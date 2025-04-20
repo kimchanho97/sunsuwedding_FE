@@ -1,13 +1,14 @@
 import React from "react";
 import BackButtonHeader from "../common/BackButtonHeader";
+import { defaultAvatarUrl } from "../../utils/constants";
 
-export default function ChatHeader({ isOnline, otherUserName, avatarUrl }) {
+export default function ChatHeader({ isOnline, partnerName, avatarUrl }) {
   return (
     <BackButtonHeader>
       <div className="pl-10 flex items-center gap-2">
         <div className="relative">
           <img
-            src={avatarUrl}
+            src={avatarUrl || defaultAvatarUrl}
             alt="avatar"
             className="w-[36px] h-[36px] object-cover object-center rounded-full "
           />
@@ -17,7 +18,7 @@ export default function ChatHeader({ isOnline, otherUserName, avatarUrl }) {
                         ${isOnline ? "bg-green-500" : "bg-red-500"}`}
           />
         </div>
-        <span className="text-sm mr-auto">{otherUserName}</span>
+        <span className="text-sm mr-auto">{partnerName}</span>
       </div>
     </BackButtonHeader>
   );

@@ -2,7 +2,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import MainLayout from "./layouts/MainLayout";
 import RequiredAuthLayout from "./layouts/RequiredAuthLayout";
 import RootLayout from "./layouts/RootLayout";
-import ChatListPage from "./pages/chat/ChatListPage";
+import ChatRoomListPage from "./pages/chat/ChatRoomListPage";
 import ChatRoomPage from "./pages/chat/ChatRoomPage";
 import CreatePortfolioPage from "./pages/createportfolio/CreatePortfolioPage";
 import FavoriteListPage from "./pages/favorite/FavoriteListPage";
@@ -29,7 +29,6 @@ function App() {
       <Routes>
         <Route element={<RootLayout />}>
           <Route element={<MainLayout />}>
-            <Route path="/chat/list" element={<ChatListPage />} />
             <Route path="/" element={<MainPage />} />
             <Route path="/search" element={<SearchPage />} />
             <Route path="/portfolios/:id" element={<PortfolioDetailPage />} />
@@ -52,6 +51,7 @@ function App() {
             />
           </Route>
           <Route element={<RequiredAuthLayout />}>
+            <Route path="/chat/rooms" element={<ChatRoomListPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route
               path="/payments/complete"
