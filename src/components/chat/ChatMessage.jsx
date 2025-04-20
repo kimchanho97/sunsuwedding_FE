@@ -2,18 +2,25 @@ import dayjs from "dayjs";
 import React from "react";
 import { useSelector } from "react-redux";
 
-function ChatMessage({ message }) {
+function ChatMessage({ message, isLast, scrollToBottom }) {
   const { userInfo } = useSelector((state) => state.user);
   const isSender = message.senderId === userInfo.userId;
   const unreadCount = 2 - (message.readBy?.length || 0);
+
+  const handleImageLoad = () => {
+    if (isLast && scrollToBottom) {
+      scrollToBottom();
+    }
+  };
 
   return (
     <div className={`flex gap-1  ${isSender ? "flex-row-reverse" : ""}`}>
       {message.messageType === "IMAGE" ? (
         <img
-          src={message.content}
+          src={message.fileUrl}
           alt="이미지"
           className="max-w-[70%] max-h-[400px]"
+          onLoad={handleImageLoad} // ✅ 이미지 로드 완료 후 scroll
         />
       ) : (
         <div

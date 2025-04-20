@@ -47,7 +47,7 @@ function App() {
           </Route>
           <Route element={<ChatRoomValidatorLayout />}>
             <Route
-              path="/chat-rooms/:chatRoomCode"
+              path="/chat/rooms/:chatRoomCode"
               element={<ChatRoomPage />}
             />
           </Route>

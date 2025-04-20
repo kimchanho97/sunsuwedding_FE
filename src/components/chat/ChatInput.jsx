@@ -1,10 +1,4 @@
-import {
-  Grid,
-  IconButton,
-  InputAdornment,
-  LinearProgress,
-  TextField,
-} from "@mui/material";
+import { Grid, IconButton, InputAdornment, TextField } from "@mui/material";
 import React, { useCallback, useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -15,10 +9,8 @@ import { ReactComponent as GalleryIcon } from "../../assets/gallery-01.svg";
 function ChatInput({ stompClient }) {
   const { userInfo } = useSelector((state) => state.user);
   const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(false); // 메세지 전송 여부
   const [imageModalOpen, setImageModalOpen] = useState(false); // 이미지 모달
-  const [uploading, setUploading] = useState(false); // 이미지 업로드 여부
-  const [percent, setPercent] = useState(0); // 이미지 업로드 퍼센트
+  const [isUploading, setIsUploading] = useState(false); // 이미지 업로드 여부
   const { chatRoomCode } = useParams();
 
   const handleOpenImageModal = useCallback(() => {
@@ -32,19 +24,8 @@ function ChatInput({ stompClient }) {
     setMessage(e.target.value);
   };
 
-  const createMessage = useCallback(() => {
-    setLoading(true);
-    return {
-      user: {
-        userId: userInfo.userId,
-        name: userInfo.username,
-      },
-      content: message,
-      isRead: false, // 상대방의 읽음 유무
-    };
-  }, [message]);
-
   const onClickSendMessage = useCallback(async () => {
+    if (isUploading) return;
     if (!stompClient || !stompClient.connected || !message) return;
     const payload = {
       senderId: userInfo.userId,
@@ -55,11 +36,11 @@ function ChatInput({ stompClient }) {
     };
     // console.log("✅ 전송 메시지:", payload);
     stompClient.publish({
-      destination: `/app/chat-rooms/${chatRoomCode}/messages`,
+      destination: `/app/chat/rooms/${chatRoomCode}/messages`,
       body: JSON.stringify(payload),
     });
     setMessage("");
-  }, [chatRoomCode, createMessage, message]);
+  }, [chatRoomCode, message]);
 
   const onKeyDownEnter = (e) => {
     if (e.isComposing || e.keyCode === 229) return;
@@ -89,7 +70,6 @@ function ChatInput({ stompClient }) {
               <InputAdornment position="end">
                 <IconButton
                   onClick={onClickSendMessage}
-                  disabled={loading}
                   aria-label="메세지 전송"
                 >
                   <SendIcon className="w-6 h-6" />
@@ -104,17 +84,10 @@ function ChatInput({ stompClient }) {
           onChange={handleOnChange}
           onKeyDown={onKeyDownEnter}
         />
-
-        {uploading ? (
-          <Grid item xs={12} sx={{ m: "10px" }}>
-            <LinearProgress variant="determinate" value={percent} />
-          </Grid>
-        ) : null}
         <ImageModal
           handleClose={handleCloseImageModal}
           open={imageModalOpen}
-          setUploading={setUploading}
-          setPercent={setPercent}
+          setIsUploading={setIsUploading}
         />
       </Grid>
     </Grid>

@@ -159,7 +159,7 @@ export default function ChatRoomPage() {
       onConnect: () => {
         console.log("STOMP 연결 성공");
         // 1. 채팅 메시지 수신
-        client.subscribe(`/topic/chat-rooms/${chatRoomCode}`, (message) => {
+        client.subscribe(`/topic/chat/rooms/${chatRoomCode}`, (message) => {
           const received = JSON.parse(message.body);
           // console.log("✅ 수신 메시지:", received);
           setNewMessages((prev) => [...prev, received]);
@@ -243,14 +243,19 @@ export default function ChatRoomPage() {
       <div className="px-[16px] pt-3 flex flex-col gap-[10px] relative mb-[80px] mt-[50px]">
         {/* 무한 스크롤 상단 옵저버 */}
         <div ref={topObserverRef} />
-        {messages.map((message) => {
+        {messages.map((message, index) => {
           const currentDate = convertToDate(message.createdAt);
           const showDate = prevDate !== currentDate;
           prevDate = currentDate;
+          const isLast = index === messages.length - 1;
           return (
             <React.Fragment key={message.messageId}>
               {showDate && <DateSeperationLine date={currentDate} />}
-              <ChatMessage message={message} />
+              <ChatMessage
+                message={message}
+                isLast={isLast}
+                scrollToBottom={scrollToBottom}
+              />
             </React.Fragment>
           );
         })}

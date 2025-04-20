@@ -6,95 +6,100 @@ import {
   DialogTitle,
   Input,
 } from "@mui/material";
-import React from "react";
+import React, { useCallback, useState } from "react";
+import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import heic2any from "heic2any";
+import { sendChatImageMessage } from "../../../apis/chat";
+import { compressImage } from "../../../utils/imageUtils";
 
-function ImageModal({ open, handleClose }) {
-  // const { userInfo } = useSelector((state) => state.user);
-  // const [file, setFile] = useState(null); // file을 state로 관리
+function ImageModal({ open, handleClose, setIsUploading }) {
+  const { userInfo } = useSelector((state) => state.user);
+  const { chatRoomCode } = useParams();
+  const [file, setFile] = useState(null);
+  const allowedExtensions = ["jpg", "jpeg", "png", "gif", "webp", "heic"];
 
-  // const onChangeAddFile = useCallback((e) => {
-  //   const addedFile = e.target.files[0];
-  //   if (addedFile) setFile(addedFile);
-  // }, []);
+  const onChangeAddFile = useCallback(
+    async (e) => {
+      let addedFile = e.target.files?.[0];
+      if (!addedFile) return;
 
-  // const createImageMessage = useCallback(
-  //   (fileUrl, fileName) => ({
-  //     // timestamp: serverTimestamp(),
-  //     user: {
-  //       userId: userInfo.userId,
-  //       name: userInfo.username,
-  //     },
-  //     content: fileName,
-  //     isRead: false, // 상대방의 읽음 유무
-  //     image: fileUrl,
-  //   }),
-  //   [],
-  // );
+      const fileExtension = addedFile.name.split(".").pop().toLowerCase();
+      if (!allowedExtensions.includes(fileExtension)) {
+        alert("허용되지 않은 이미지 확장자입니다.");
+        return;
+      }
 
-  // const uploadFile = useCallback(() => {
-  //   setUploading(true);
-  //
-  //   const unsubscribe = uploadTask.on(
-  //     // 이벤트 리스너를 등록
-  //     "state_changed",
-  //     (snap) => {
-  //       const percentUploaded = Math.round(
-  //         (snap.bytesTransferred / snap.totalBytes) * 100,
-  //       );
-  //       setPercent(percentUploaded);
-  //     },
-  //     (error) => {
-  //       console.error(error);
-  //       setUploading(false);
-  //     },
-  //
-  //     // 업로드 완료시
-  //     async () => {
-  //       try {
-  //         // 업로드한 파일의 다운로드 URL을 가져온다.
-  //         const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
-  //         // 메세지를 보내는 과정
-  //         await set(
-  //           push(ref(getDatabase(), `messages/${chatId}`)),
-  //           createImageMessage(downloadUrl, file.name),
-  //         );
-  //         setUploading(false);
-  //         unsubscribe();
-  //       } catch (error) {
-  //         console.error(error);
-  //         setUploading(false);
-  //         unsubscribe();
-  //       }
-  //     },
-  //   );
-  // }, [chatId, createImageMessage, file, setPercent, setUploading]);
+      try {
+        setIsUploading(true);
 
-  // const handleSendFile = useCallback(() => {
-  //   if (!file) {
-  //     handleClose();
-  //     return;
-  //   }
-  //   uploadFile();
-  //   handleClose();
-  //   setFile(null);
-  // }, [file, handleClose, uploadFile]);
+        // ✅ HEIC 변환
+        if (fileExtension === "heic") {
+          const blob = addedFile;
+          const resultBlob = await heic2any({ blob, toType: "image/jpeg" });
+          addedFile = new File(
+            [resultBlob],
+            `${addedFile.name.split(".")[0]}.jpg`,
+            { type: "image/jpeg", lastModified: new Date().getTime() },
+          );
+        }
+
+        // ✅ 압축
+        const compressedFile = await compressImage(addedFile);
+        setFile(compressedFile);
+      } catch (err) {
+        console.error("이미지 변환/압축 실패:", err);
+      } finally {
+        setIsUploading(false);
+      }
+    },
+    [setIsUploading],
+  );
+
+  const handleSendFile = useCallback(async () => {
+    if (!file || !chatRoomCode) {
+      handleClose();
+      return;
+    }
+
+    const payload = {
+      senderId: userInfo.userId,
+      senderName: userInfo.username,
+      content: file.name,
+      messageType: "IMAGE",
+      createdAt: new Date().toISOString(),
+    };
+
+    try {
+      setIsUploading(true);
+      await sendChatImageMessage(chatRoomCode, payload, file);
+    } catch (err) {
+      console.error("❌ 이미지 메시지 전송 실패:", err);
+    } finally {
+      setIsUploading(false);
+      setFile(null);
+      handleClose();
+    }
+  }, [file, chatRoomCode, userInfo, handleClose]);
 
   return (
     <Dialog open={open} onClose={handleClose}>
       <DialogTitle>이미지 보내기</DialogTitle>
       <DialogContent>
         <Input
-          margin="dense"
-          inputProps={{ accept: "image/jpeg, image/jpg, image/png, image/gif" }} // 이미지 파일 형식
           type="file"
+          inputProps={{
+            accept: allowedExtensions.map((ext) => `image/${ext}`).join(","),
+          }}
           fullWidth
-          variant="standard"
-          // onChange={onChangeAddFile}
+          onChange={onChangeAddFile}
         />
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>취소</Button>
-        {/* <Button onClick={handleSendFile}>전송</Button> */}
+        <Button onClick={handleSendFile} disabled={!file}>
+          전송
+        </Button>
       </DialogActions>
     </Dialog>
   );
