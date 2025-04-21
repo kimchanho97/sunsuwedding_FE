@@ -12,8 +12,6 @@ export default function ChatRoomItem({
   unreadCount,
   avatarUrl,
 }) {
-  const MIN_DATE = "-999999999-01-01T00:00:00";
-
   return (
     <Link
       className=" block px-[29px] pt-[15px] pb-[20px] w-full hover:bg-zinc-100"
@@ -29,9 +27,7 @@ export default function ChatRoomItem({
           <div className="flex justify-between w-full">
             <span className="text-base font-bold">{chatPartnerName}</span>
             <span className="text-sm text-zinc-500">
-              {lastMessageAt === MIN_DATE
-                ? "-"
-                : dayjs(lastMessageAt).format("YYYY.MM.DD")}
+              {dayjs(lastMessageAt).format("YYYY.MM.DD")}
             </span>
           </div>
           <div className="flex justify-between w-full">
