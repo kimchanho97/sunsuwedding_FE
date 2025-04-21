@@ -49,22 +49,28 @@ const MainCarousel = () => {
       {/* eslint-disable-next-line react/jsx-props-no-spreading */}
       <Slider {...settings}>
         <MainPhoto
-          to="portfolios/1"
-          src="images/1_1.webp"
+          src="images/wedding_3_compressed.webp"
           alt="유희정 플래너 메인 사진"
           className="portfolio-image"
           plannerName="유희정 플래너"
-          brideName="김연아 신부님"
-          brideInstagram="@yunakim"
         />
         <MainPhoto
-          to="portfolios/2"
-          src="images/2_1.webp"
+          src="images/wedding_1_compressed.webp"
           alt="김아름 플래너 메인 사진"
           className="portfolio-image"
           plannerName="김아름 플래너"
-          brideName="박신혜 신부님"
-          brideInstagram="@ssinz7"
+        />
+        <MainPhoto
+          src="images/wedding_13_compressed.webp"
+          alt="최화정 플래너 메인 사진"
+          className="portfolio-image"
+          plannerName="최화정 플래너"
+        />
+        <MainPhoto
+          src="images/wedding_5_compressed.webp"
+          alt="박정현 플래너 메인 사진"
+          className="portfolio-image"
+          plannerName="박정현 플래너"
         />
       </Slider>
     </>
