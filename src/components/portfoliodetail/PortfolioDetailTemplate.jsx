@@ -13,6 +13,7 @@ import MembershipPaySection from "./MembershipPaySection";
 import PlannerInfoRow from "./PlannerInfoRow";
 import PortfolioCarousel from "./PortfolioCarousel";
 import ChatConfirmBottomSheet from "./ChatConfirmBottomSheet";
+import PaymentsHistorySection from "./PaymentsHistorySection";
 
 const PortfolioDetailTemplate = ({ portfolio }) => {
   const { isLogged, userInfo } = useSelector((state) => state.user);
@@ -87,14 +88,17 @@ const PortfolioDetailTemplate = ({ portfolio }) => {
       />
       <DivideBar />
       <div className="justify-between p-5">
-        <div className="text-base font-bold">이전 매칭 내역</div>
+        <div className="text-base font-bold">
+          <span>이전 매칭 내역 </span>
+          <span className="text-xs font-semibold text-zinc-400">
+            (샘플 데이터입니다)
+          </span>
+        </div>
         <div className="pt-5">
           {userInfo.grade === "premium" ? (
-            // <PaymentsHistorySection
-            //   portfolio={portfolio}
-            //   setHistoryBottomSheetOpen={setHistoryBottomSheetOpen}
-            // />
-            <div />
+            <PaymentsHistorySection
+              setHistoryBottomSheetOpen={setHistoryBottomSheetOpen}
+            />
           ) : (
             <MembershipPaySection
               handleOpenPaymentBottomSheet={handleOpenPaymentBottomSheet}
