@@ -3,7 +3,7 @@ import axios from "axios";
 export const instance = axios.create({
   baseURL: process.env.REACT_APP_API_URL,
   timeout: 5000,
-  withCredentials: true, // 쿠키 전달
+  withCredentials: true, // 쿠키
   headers: {
     "Content-Type": "application/json",
   },
