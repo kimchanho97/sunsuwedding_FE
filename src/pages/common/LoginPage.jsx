@@ -14,15 +14,19 @@ import useInput from "../../hooks/useInput";
 import { logIn, setUserInfo } from "../../store/slices/userSlice";
 import { validateEmail, validatePassword } from "../../utils";
 import useDefaultErrorHandler from "../../hooks/useDefaultErrorHandler";
+import GuestLoginSheet from "./GuestLoginSheet";
 
 export default function LoginPage() {
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false); // login api 호출 중인지 아닌지 확인
-  const { values, handleChange } = useInput({
+  const { values, handleChange, setValues } = useInput({
     email: "",
     password: "",
   });
+
+  const [isGuestLoginSheetOpen, setIsGuestLoginSheetOpen] = useState(false);
+
   const emailInputRef = useRef(null);
   const passwordInputRef = useRef(null);
   const dispatch = useDispatch();
@@ -85,6 +89,16 @@ export default function LoginPage() {
 
   return (
     <Container className="max-w-none">
+      {isGuestLoginSheetOpen && (
+        <GuestLoginSheet
+          isOpen={isGuestLoginSheetOpen}
+          onClose={() => setIsGuestLoginSheetOpen(false)}
+          onSelectUser={({ email, password }) => {
+            setValues({ email, password });
+            setIsGuestLoginSheetOpen(false);
+          }}
+        />
+      )}
       <BackButtonHeader>
         <span className="text-sm w-full text-center font-medium">로그인</span>
       </BackButtonHeader>
@@ -143,6 +157,15 @@ export default function LoginPage() {
             <Link className="font-bold underline " to="/signup">
               회원가입
             </Link>
+          </div>
+          <div className="flex items-center justify-center gap-2 pt-2 tracking-tight">
+            <button
+              type="button"
+              className="font-bold underline"
+              onClick={() => setIsGuestLoginSheetOpen(true)}
+            >
+              회원가입 없이 체험하기
+            </button>
           </div>
         </form>
       </Box>
