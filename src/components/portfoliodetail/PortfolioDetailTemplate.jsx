@@ -30,6 +30,14 @@ const PortfolioDetailTemplate = ({ portfolio }) => {
     setPaymentBottomSheetOpen(true);
   };
 
+  const handleOpenChatConfirmBottomSheet = () => {
+    if (!isLogged) {
+      openBottomSheetHandler({ bottomSheet: "loginBottomSheet" });
+      return;
+    }
+    setChatConfirmOpen(true);
+  };
+
   return (
     <div className="w-full h-full relative">
       {paymentBottomSheetOpen && (
@@ -109,7 +117,7 @@ const PortfolioDetailTemplate = ({ portfolio }) => {
       {!(userInfo.role === "planner") && (
         <Button
           className="w-full h-[50px] mt-3 flex items-center justify-center bg-lightskyblue-sunsu text-sm"
-          onClick={() => setChatConfirmOpen(true)} // ✅ 바텀시트 오픈
+          onClick={handleOpenChatConfirmBottomSheet}
         >
           <span>채팅 상담 받기</span>
         </Button>
