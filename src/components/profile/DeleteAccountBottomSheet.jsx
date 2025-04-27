@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { deleteAccount } from "../../apis/user";
 import { logOut } from "../../store/slices/userSlice";
 import Button from "../common/atoms/Button";
 import BottomSheet from "../common/bottomsheet/BottomSheet";
@@ -20,7 +19,7 @@ export default function DeleteAccountBottomSheet({ onClose }) {
     if (!agreePolicy) return;
     setIsSubmitting(true);
     try {
-      await deleteAccount();
+      // await deleteAccount();
       dispatch(logOut());
     } catch (error) {
       defaultErrorHandler(error);
