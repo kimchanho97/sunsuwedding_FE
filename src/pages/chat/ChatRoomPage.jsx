@@ -162,11 +162,19 @@ export default function ChatRoomPage() {
       reconnectDelay: 5000,
       onConnect: () => {
         console.log("STOMP 연결 성공");
+
         // 1. 채팅 메시지 수신
         client.subscribe(`/topic/chat/rooms/${chatRoomCode}`, (message) => {
           const received = JSON.parse(message.body);
-          // console.log("✅ 수신 메시지:", received);
-          setNewMessages((prev) => [...prev, received]);
+          // sequenceId 기반으로 중복 체크하여 추가
+          setNewMessages((prev) => {
+            // 이미 존재하는 메시지인지 확인 (sequenceId 기준)
+            const isDuplicate = prev.some(
+              (msg) => msg.sequenceId === received.sequenceId,
+            );
+            // 중복이 아닌 경우에만 추가
+            return isDuplicate ? prev : [...prev, received];
+          });
         });
 
         // 2. 상대방 상태 구독
