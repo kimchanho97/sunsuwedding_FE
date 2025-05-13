@@ -10,6 +10,7 @@ import React, { useCallback, useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import heic2any from "heic2any";
+import { v4 as uuidv4 } from "uuid";
 import { sendChatImageMessage } from "../../../apis/chat";
 import { compressImage } from "../../../utils/imageUtils";
 
@@ -63,6 +64,7 @@ function ImageModal({ open, handleClose, setIsUploading }) {
     }
 
     const payload = {
+      messageId: uuidv4(),
       senderId: userInfo.userId,
       senderName: userInfo.username,
       content: file.name,

@@ -2,6 +2,7 @@ import { Grid, IconButton, InputAdornment, TextField } from "@mui/material";
 import React, { useCallback, useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
 import ImageModal from "../common/modal/ImageModal";
 import { ReactComponent as SendIcon } from "../../assets/send-01.svg";
 import { ReactComponent as GalleryIcon } from "../../assets/gallery-01.svg";
@@ -28,6 +29,7 @@ function ChatInput({ stompClient }) {
     if (isUploading) return;
     if (!stompClient || !stompClient.connected || !message) return;
     const payload = {
+      messageId: uuidv4(),
       senderId: userInfo.userId,
       senderName: userInfo.username,
       content: message,
