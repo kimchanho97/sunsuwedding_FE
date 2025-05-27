@@ -1,5 +1,4 @@
 import { loadTossPayments } from "@tosspayments/payment-sdk";
-import { nanoid } from "nanoid";
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { savePayment } from "../../../apis/payments";
@@ -9,7 +8,6 @@ import { comma } from "../../../utils/convert";
 import Button from "../atoms/Button";
 import BottomSheet from "./BottomSheet";
 
-// done test
 export default function PaymentBottomSheet({ onClose }) {
   const { userInfo } = useSelector((state) => state.user);
   const [isLoading, setIsLoading] = useState(false);
@@ -19,11 +17,9 @@ export default function PaymentBottomSheet({ onClose }) {
   const handleOnPayment = async () => {
     try {
       setIsLoading(true);
-      const newOrderId = nanoid();
-      await savePayment({
-        amount: sunsuMembershipPrice,
-        orderId: newOrderId,
-      });
+
+      // 결제 정보를 저장하고, 결제 금액과 주문 ID를 받아옴
+      const paymentData = await savePayment();
 
       const tosspayments = await loadTossPayments(
         process.env.REACT_APP_TOSS_CLIENT_KEY,
@@ -31,8 +27,8 @@ export default function PaymentBottomSheet({ onClose }) {
       tossPaymentsRef.current = tosspayments;
 
       await tosspayments.requestPayment("카드", {
-        amount: sunsuMembershipPrice,
-        orderId: newOrderId,
+        amount: paymentData.amount,
+        orderId: paymentData.orderId,
         orderName: "순수 멤버십",
         successUrl: `${window.location.origin}/payments/complete`,
         failUrl: `${window.location.origin}/payments/fail`,
